@@ -39,7 +39,7 @@ public class OrderServiceTest {
     @Test
     public void testOrderServicerOrderIn() {
 
-        InMemorySink<String> sink = connector.sink("orders-out");
+        InMemorySink<String> sink = connector.sink("orders-up");
 
         PlaceOrderCommand placeOrderCommand = new PlaceOrderCommand(
                 "82124c69-a108-4ccc-9ac4-64566e389178",

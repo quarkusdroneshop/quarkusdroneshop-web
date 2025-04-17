@@ -23,7 +23,7 @@ public class OrderService {
     Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     @Inject
-    @Channel("orders-out")
+    @Channel("orders-up")
     Emitter<String> ordersOutEmitter;
 
     public CompletableFuture<Void> placeOrder(final PlaceOrderCommand placeOrderCommand){
