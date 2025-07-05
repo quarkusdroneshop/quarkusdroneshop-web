@@ -60,7 +60,7 @@ By default Quarkus listens on port 5005 for a debugger.  You can change this by 
 ### pgAdmin
 
 The docker-compose file starts an instance of pgAdmin4.  You can login with:
-* quarkus.cafe@redhat.com/redhat-20
+* quarkus.shop@redhat.com/redhat-20
 
 You will need to create a connection to the Crunchy PostgreSQL database.  Use the following values:
 * General 
@@ -97,6 +97,6 @@ export KAFKA_BOOTSTRAP_URLS=localhost:9092 STREAM_URL=http://localhost:8080/dash
 docker build -f src/main/docker/Dockerfile.native -t <<DOCKER_HUB_ID>>/quarkuscoffeeshop-web .
 docker run -i --network="host" -e STREAM_URL=${STREAM_URL} -e CORS_ORIGINS=${CORS_ORIGINS} -e KAFKA_BOOTSTRAP_URLS=${KAFKA_BOOTSTRAP_URLS} <<DOCKER_ID>>/quarkuscoffeeshop-web:latest
 docker images -a | grep web
-docker tag <<RESULT>> <<DOCKER_HUB_ID>>/quarkus-cafe-web:<<VERSION>>
+docker tag <<RESULT>> <<DOCKER_HUB_ID>>/quarkus-shop-web:<<VERSION>>
 ```
 

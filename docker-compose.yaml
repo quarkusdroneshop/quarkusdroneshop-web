@@ -81,8 +81,8 @@ services:
 #      - PG_MODE=primary
 #      - PG_PRIMARY_USER=postgres
 #      - PG_PRIMARY_PASSWORD=redhat-20
-#      - PG_DATABASE=cafedb
-#      - PG_USER=cafeuser
+#      - PG_DATABASE=shopdb
+#      - PG_USER=shopuser
 #      - PG_PASSWORD=redhat-20
 #      - PG_ROOT_PASSWORD=redhat-20
 #      - PG_PRIMARY_PORT=5432
@@ -95,7 +95,7 @@ services:
 #    image: crunchydata/crunchy-pgadmin4:centos7-10.9-2.4.1
 #    container_name:  'pgadmin4'
 #    environment:
-#      - PGADMIN_SETUP_EMAIL=quarkus.cafe@redhat.com
+#      - PGADMIN_SETUP_EMAIL=quarkus.shop@redhat.com
 #      - PGADMIN_SETUP_PASSWORD=redhat-20
 #      - SERVER_PORT=5050
 #    volumes:
