@@ -27,7 +27,7 @@ public class OrderServiceTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceTest.class);
 
-    private static final String expectedPayload = "{\"id\":\"82124c69-a108-4ccc-9ac4-64566e389178\",\"orderSource\":\"WEB\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":null,\"baristaLineItems\":[{\"item\":\"QDC_A101\",\"price\":2.5,\"name\":\"Bugs\"}],\"kitchenLineItems\":[]}";
+    private static final String expectedPayload = "{\"id\":\"82124c69-a108-4ccc-9ac4-64566e389178\",\"orderSource\":\"WEB\",\"location\":\"ATLANTA\",\"loyaltyMemberId\":null,\"QDCA10LineItems\":[{\"item\":\"QDC_A101\",\"price\":2.5,\"name\":\"Bugs\"}],\"QDCA10ProLineItems\":[]}";
 
     @Inject
     @Any
