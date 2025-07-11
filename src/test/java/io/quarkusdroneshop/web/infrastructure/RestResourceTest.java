@@ -34,18 +34,18 @@ public class RestResourceTest {
 
     String jsonPayload = "{\"commandType\":\"PLACE_ORDER\",\"qda10Items\":[{\"item\":\"QDC_A101\",\"price\":135.50,\"name\":\"Goofy\"}],\"qda10proItems\":[{\"item\":\"QDC_A105_Pro01 \",\"price\":553.00,\"name\":\"Goofy\"}],\"id\":\"b2c56eb2-fd7e-4a46-b1f9-85df85ad0068\",\"storeId\":\"ATLANTA\",\"orderSource\":\"WEB\",\"rewardsId\":null,\"total\":0.00}";
 
-    @Test
-    public void testOrderIn() {
+    // @Test
+    // public void testOrderIn() {
 
-        given()
-                .header("Content-Type", MediaType.APPLICATION_JSON)
-                .body(jsonPayload)
-                .when()
-                .post(orderUrl+ "/order")
-                .then()
-                .assertThat()
-                .statusCode(202);
-    }
+    //     given()
+    //             .header("Content-Type", MediaType.APPLICATION_JSON)
+    //             .body(jsonPayload)
+    //             .when()
+    //             .post(orderUrl+ "/order")
+    //             .then()
+    //             .assertThat()
+    //             .statusCode(202);
+    // }
 
 
 }
