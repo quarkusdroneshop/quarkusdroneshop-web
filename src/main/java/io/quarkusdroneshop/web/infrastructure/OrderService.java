@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
-import java.util.Objects;
 import java.util.Optional;
 
 import static io.quarkusdroneshop.web.infrastructure.JsonUtil.toJson;
@@ -38,47 +37,57 @@ public class OrderService {
     public CompletableFuture<OrderResult> placeOrder(final PlaceOrderCommand placeOrderCommand) {
 
         logger.debug("PlaceOrderCommandReceived: {}", placeOrderCommand);
-        
-        // 1件目の qdca10 または qdca10pro を取得
-        Optional<OrderLineItem> firstItem = placeOrderCommand.getqdca10Items()
-            .flatMap(items -> items.stream().findFirst());
-
-        if (firstItem.isEmpty()) {
+    
+        List<OrderLineItem> allItems = Stream.concat(
+            placeOrderCommand.getqdca10Items().orElse(List.of()).stream(),
+            placeOrderCommand.getqdca10proItems().orElse(List.of()).stream()
+        ).toList();
+    
+        if (allItems.isEmpty()) {
             return CompletableFuture.failedFuture(new IllegalArgumentException("No order items found"));
         }
-
-        OrderLineItem item = firstItem.get();
-        long now = Instant.now().toEpochMilli();
-
+    
         String orderId = placeOrderCommand.getId();
-        String lineItemId = "lineitem-" + now;
-        String itemName = item.getName();
         String customerName = placeOrderCommand.getRewardsId().orElse("guest");
-
-        // OrderUp 作成
-        OrderUp orderUp = new OrderUp(
-            orderId,
-            lineItemId,
-            itemName,
-            customerName,
-            now
-        );
-
-        // RewardEvent 判定
-        RewardEvent rewardEvent = null;
-        int quantity = 1;  // ← OrderLineItemにgetQuantity()がなければ仮値
-        if (quantity >= 5) {
-            BigDecimal points = item.getPrice()
-                .multiply(BigDecimal.valueOf(quantity))
-                .multiply(BigDecimal.valueOf(0.15));
-            rewardEvent = new RewardEvent(customerName, orderId, points);
-            orderUp.setRewardPoints(points);
+    
+        OrderUp orderUp = null;
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        int totalQuantity = 0;
+    
+        long now = Instant.now().toEpochMilli();
+    
+        for (int i = 0; i < allItems.size(); i++) {
+            OrderLineItem item = allItems.get(i);
+            String lineItemId = "lineitem-" + now + "-" + i;
+    
+            orderUp = new OrderUp(
+                orderId,
+                lineItemId,
+                item.getName(),
+                customerName,
+                now + i  // ユニークなタイムスタンプ（省略可）
+            );
+    
+            totalPrice = totalPrice.add(item.getPrice());
+            totalQuantity++;
         }
-
-        // Kafka送信
+    
+        // WebOrderCommandをKafkaに送信（元の全体情報）
         WebOrderCommand webOrderCommand = new WebOrderCommand(placeOrderCommand);
         ordersOutEmitter.send(toJson(webOrderCommand));
-
+    
+        // RewardEvent（合計数量が5以上なら発行）
+        RewardEvent rewardEvent = null;
+        if (totalQuantity >= 5) {
+            BigDecimal rewardPoints = totalPrice
+                .multiply(BigDecimal.valueOf(0.15)); // 15%還元
+            rewardEvent = new RewardEvent(customerName, orderId, rewardPoints);
+    
+            if (orderUp != null) {
+                orderUp.setRewardPoints(rewardPoints);
+            }
+        }
+    
         // 結果を返す（pro 判定）
         if (customerName.startsWith("pro")) {
             return CompletableFuture.completedFuture(new Qdca10proResult(orderUp, rewardEvent, false));
