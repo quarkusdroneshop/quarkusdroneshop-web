@@ -19,6 +19,9 @@ import javax.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.concurrent.CompletableFuture;
 import java.util.Optional;
 
@@ -41,7 +44,7 @@ public class OrderService {
         List<OrderLineItem> allItems = Stream.concat(
             placeOrderCommand.getqdca10Items().orElse(List.of()).stream(),
             placeOrderCommand.getqdca10proItems().orElse(List.of()).stream()
-        ).toList();
+        ).collect(Collectors.toList());
     
         if (allItems.isEmpty()) {
             return CompletableFuture.failedFuture(new IllegalArgumentException("No order items found"));
