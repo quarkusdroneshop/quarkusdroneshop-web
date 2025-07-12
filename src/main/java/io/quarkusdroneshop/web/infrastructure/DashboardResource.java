@@ -9,6 +9,8 @@ import org.jboss.resteasy.annotations.SseElementType;
 import org.reactivestreams.Publisher;
 
 import javax.inject.Inject;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.eclipse.microprofile.reactive.messaging.Channel;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -22,6 +24,8 @@ public class DashboardResource {
 
     @Inject
     @Channel("web-updates")
+    Emitter<DashboardUpdate> webUpdatesEmitter;
+
     @Broadcast
     Publisher<DashboardUpdate> updater;
 
