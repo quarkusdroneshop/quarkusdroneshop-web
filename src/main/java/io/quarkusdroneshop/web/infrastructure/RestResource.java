@@ -5,6 +5,7 @@ import io.quarkus.qute.TemplateInstance;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.quarkusdroneshop.web.domain.commands.PlaceOrderCommand;
 import io.quarkusdroneshop.domain.valueobjects.OrderResult;
+import io.quarkusdroneshop.domain.Reward;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,14 @@ public class RestResource {
     @ConfigProperty(name="storeId")
     String storeId;
 
+    @ConfigProperty(name="rewardUrl")
+    String rewardUrl;
+
     @Inject
     OrderService orderService;
+
+    @Inject
+    Reward reward;
 
     @Inject
     Template shopTemplate;
@@ -49,7 +56,9 @@ public class RestResource {
         return shopTemplate
                 .data("streamUrl", streamUrl)
                 .data("loyaltyStreamUrl", loyaltyStreamUrl)
-                .data("storeId", storeId);
+                .data("rewardUrl", rewardUrl)
+                .data("storeId", storeId)
+                .data("reward", reward);
     }
 
     @POST

@@ -2,6 +2,10 @@ const appvalues = document.querySelector('#appvalues');
 const storeId = appvalues.dataset.storeId;
 const streamUrl = appvalues.dataset.streamUrl;
 const loyaltyStreamUrl = appvalues.dataset.loyaltyStreamUrl;
+const rewardUrl = appvalues.dataset.rewardUrl;
+
+// Rewards Stream EventSource - ポイント表示
+const rewardPointsEl = document.getElementById('rewardPoints');
 
 /* Display the modal popup with selected data */
 $('#myModal').on('show.bs.modal', function (event) {
@@ -229,7 +233,7 @@ function uuidv4() {
 
 // Status Board
 $(function () {
-    /*          var source = new EventSource("http://quarkus-shop-web-quarkus-shop.apps.cluster-virtual-1b57.virtual-1b57.sandbox1482.opentlc.com/dashboard/stream"); */
+    /* var source = new EventSource("http://quarkus-shop-web-quarkus-shop.apps.cluster-virtual-1b57.virtual-1b57.sandbox1482.opentlc.com/dashboard/stream"); */
 
     var source = new EventSource(streamUrl);
     source.onmessage = function(e) {
@@ -383,6 +387,36 @@ function displayFriendlyStatus(status){
     return result;
 }
 
+function displayRewardPoint(){
+    const rewardPointsEl = document.getElementById('rewardPoints');
+    const rewardEventSource = new EventSource('/dashboard/rewards/stream');
+    
+    // 顧客ごとの累積ポイントを保持するオブジェクト
+    const accumulatedRewards = {};
+    
+    rewardEventSource.onmessage = function(event) {
+        const reward = JSON.parse(event.data);
+        console.log("🎁 新しいリワードイベント", reward);
+    
+        if (reward && reward.customerName && typeof reward.rewardAmount === "number") {
+            // すでにあれば加算、なければ初期化
+            if (!accumulatedRewards[reward.customerName]) {
+                accumulatedRewards[reward.customerName] = 0;
+            }
+            accumulatedRewards[reward.customerName] += reward.rewardAmount;
+    
+            // 全顧客分をまとめて表示（例: customerName: ポイント）
+            let displayText = Object.entries(accumulatedRewards)
+                .map(([name, points]) => `${name}: ${points.toFixed(2)} pt`)
+                .join(' | ');
+    
+            rewardPointsEl.textContent = displayText;
+        } else {
+            rewardPointsEl.textContent = "ポイント情報なし";
+        }
+    };
+}
+
 $('#rewards_modal').on('submit', function() {
 
     let rewards_id = $('#rewards_id').val();
@@ -405,4 +439,5 @@ $( document ).ready(function() {
         $('#rewards_id').val(email);
         $('#rewards_display_id').text(email);
     }
+    displayRewardPoint();
 });
