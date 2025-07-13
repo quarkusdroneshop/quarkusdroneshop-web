@@ -5,18 +5,19 @@ import io.quarkusdroneshop.web.domain.RewardEvent;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
-import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
+import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.SseElementType;
 import org.reactivestreams.Publisher;
-
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Channel;
+
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,8 +32,6 @@ public class DashboardResource {
 
     @Inject
     @Channel("web-updates")
-    Emitter<DashboardUpdate> webUpdatesEmitter;
-
     @Broadcast
     Publisher<DashboardUpdate> updater;
 
@@ -42,9 +41,9 @@ public class DashboardResource {
     Publisher<RewardEvent> rewards;
 
     @GET
-    @Path("/stream") // 旧 dashboardStream()
-    @Produces(MediaType.SERVER_SENT_EVENTS)
-    @SseElementType("text/plain")
+    @Path("/stream")
+    @Produces(MediaType.SERVER_SENT_EVENTS) // denotes that server side events (SSE) will be produced
+    @SseElementType("text/plain") // denotes that the contained data, within this SSE, is just regular text/plain data
     public Publisher<DashboardUpdate> dashboardStream() {
         return updater;
     }

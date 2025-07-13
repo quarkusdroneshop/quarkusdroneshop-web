@@ -389,31 +389,34 @@ function displayFriendlyStatus(status){
 
 function displayRewardPoint(){
     const rewardPointsEl = document.getElementById('rewardPoints');
-    const rewardEventSource = new EventSource('/dashboard/rewards/stream');
-    
-    // 顧客ごとの累積ポイントを保持するオブジェクト
+    const rewardEventSource = new EventSource(rewardUrl);
+
     const accumulatedRewards = {};
-    
+
     rewardEventSource.onmessage = function(event) {
         const reward = JSON.parse(event.data);
-        console.log("🎁 新しいリワードイベント", reward);
-    
+        console.log("reward point", reward);
+
         if (reward && reward.customerName && typeof reward.rewardAmount === "number") {
-            // すでにあれば加算、なければ初期化
-            if (!accumulatedRewards[reward.customerName]) {
-                accumulatedRewards[reward.customerName] = 0;
+            const name = reward.customerName;
+
+            if (!accumulatedRewards[name]) {
+                accumulatedRewards[name] = 0;
             }
-            accumulatedRewards[reward.customerName] += reward.rewardAmount;
-    
-            // 全顧客分をまとめて表示（例: customerName: ポイント）
-            let displayText = Object.entries(accumulatedRewards)
-                .map(([name, points]) => `${name}: ${points.toFixed(2)} pt`)
+            accumulatedRewards[name] += reward.rewardAmount;
+
+            const displayText = Object.entries(accumulatedRewards)
+                .map(([customerName, points]) => `POINT ${points.toFixed(2)} `)
                 .join(' | ');
-    
-            rewardPointsEl.textContent = displayText;
-        } else {
-            rewardPointsEl.textContent = "ポイント情報なし";
+
+            if (rewardPointsEl) {
+                rewardPointsEl.textContent = displayText;
+            }
         }
+    };
+
+    rewardEventSource.onerror = function(error) {
+        console.error("SSE Error:", error);
     };
 }
 
@@ -432,10 +435,7 @@ $('#rewardsModal').on('shown.bs.modal', function() {
 
 $( document ).ready(function() {
     let email = $.cookie('rewards_email');
-
-    if (email === undefined){
-        //nothing
-    }else{
+    if (email !== undefined){
         $('#rewards_id').val(email);
         $('#rewards_display_id').text(email);
     }

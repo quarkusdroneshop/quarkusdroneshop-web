@@ -6,15 +6,15 @@ import java.math.BigDecimal;
 
 @RegisterForReflection
 public class RewardEvent {
-    public String name;
+    public String customerName;
     public String orderId;
-    public BigDecimal points;
+    public BigDecimal rewardAmount;
 
     public RewardEvent() {} // JSON Deserialization 用
 
-    public RewardEvent(String name, String orderId, BigDecimal points) {
-        this.name = name;
+    public RewardEvent(String customerName, String orderId, BigDecimal rewardAmount) {
+        this.customerName = customerName;
         this.orderId = orderId;
-        this.points = points;
+        this.rewardAmount = rewardAmount;
     }
 }

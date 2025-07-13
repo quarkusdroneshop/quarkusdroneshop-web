@@ -10,7 +10,7 @@ public class Reward {
     private String orderId;
 
     @JsonProperty("rewardAmount")
-    private double points;
+    private double rewardAmount;
 
     public String getCustomerName() {
         return customerName;
@@ -29,10 +29,10 @@ public class Reward {
     }
 
     public double getPoints() {
-        return points;
+        return rewardAmount;
     }
 
-    public void setPoints(double points) {
-        this.points = points;
+    public void setPoints(double rewardAmount) {
+        this.rewardAmount = rewardAmount;
     }
 }

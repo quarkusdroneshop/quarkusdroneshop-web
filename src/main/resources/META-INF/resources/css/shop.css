@@ -24,8 +24,8 @@
 
 #rewardPoints {
     font-size: 20px;
-    color: #c02628;
-    margin-left: 80px;
+    color: #c02628 !important;;
+    margin-left: 60px;
     justify-content: center;
     align-items: center;
     display: inline-block;
