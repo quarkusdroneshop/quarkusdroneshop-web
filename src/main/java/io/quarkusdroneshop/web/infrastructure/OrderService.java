@@ -11,8 +11,12 @@ import io.quarkusdroneshop.web.domain.commands.WebOrderCommand;
 import io.quarkusdroneshop.domain.OrderLineItem;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.eclipse.microprofile.reactive.messaging.Message;
+import io.smallrye.reactive.messaging.kafka.KafkaRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.smallrye.reactive.messaging.kafka.KafkaRecord;
+import org.eclipse.microprofile.reactive.messaging.Message;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -40,29 +44,29 @@ public class OrderService {
     public CompletableFuture<OrderResult> placeOrder(final PlaceOrderCommand placeOrderCommand) {
 
         logger.debug("PlaceOrderCommandReceived: {}", placeOrderCommand);
-    
+
         List<OrderLineItem> allItems = Stream.concat(
             placeOrderCommand.getqdca10Items().orElse(List.of()).stream(),
             placeOrderCommand.getqdca10proItems().orElse(List.of()).stream()
         ).collect(Collectors.toList());
-    
+
         if (allItems.isEmpty()) {
             return CompletableFuture.failedFuture(new IllegalArgumentException("No order items found"));
         }
-    
+
         String orderId = placeOrderCommand.getId();
         String customerName = placeOrderCommand.getRewardsId().orElse("guest");
-    
+
         OrderUp orderUp = null;
         BigDecimal totalPrice = BigDecimal.ZERO;
         int totalQuantity = 0;
-    
+
         long now = Instant.now().toEpochMilli();
-    
+
         for (int i = 0; i < allItems.size(); i++) {
             OrderLineItem item = allItems.get(i);
             String lineItemId = "lineitem-" + now + "-" + i;
-    
+
             orderUp = new OrderUp(
                 orderId,
                 lineItemId,
@@ -70,27 +74,30 @@ public class OrderService {
                 customerName,
                 now + i  // ユニークなタイムスタンプ（省略可）
             );
-    
+
             totalPrice = totalPrice.add(item.getPrice());
             totalQuantity++;
         }
-    
+
         // WebOrderCommandをKafkaに送信（元の全体情報）
-        WebOrderCommand webOrderCommand = new WebOrderCommand(placeOrderCommand);
-        ordersOutEmitter.send(toJson(webOrderCommand));
-    
+        WebOrderCommand webOrderCommand = new WebOrderCommand(placeOrderCommand);       
+
+        long timestamp = System.currentTimeMillis();
+        Message<String> msg = KafkaRecord.of(null, toJson(webOrderCommand));
+        ordersOutEmitter.send(msg);  // timestamp付きで送信
+
         // RewardEvent（合計数量が5以上なら発行）
         RewardEvent rewardEvent = null;
         if (totalQuantity >= 5) {
             BigDecimal rewardPoints = totalPrice
                 .multiply(BigDecimal.valueOf(0.15)); // 15%還元
             rewardEvent = new RewardEvent(customerName, orderId, rewardPoints);
-    
+
             if (orderUp != null) {
                 orderUp.setRewardPoints(rewardPoints);
             }
         }
-    
+
         // 結果を返す（pro 判定）
         if (customerName.startsWith("pro")) {
             return CompletableFuture.completedFuture(new Qdca10proResult(orderUp, rewardEvent, false));

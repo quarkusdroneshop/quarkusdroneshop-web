@@ -10,9 +10,7 @@ public class OrderIn {
     private int quantity;
     private BigDecimal price;
 
-    public OrderIn() {
-        // デフォルトコンストラクタ（JSONバインディング用など）
-    }
+    public OrderIn() {}
 
     public OrderIn(String orderId, String lineItemId, String itemName, String customerName, int quantity, BigDecimal price) {
         this.orderId = orderId;

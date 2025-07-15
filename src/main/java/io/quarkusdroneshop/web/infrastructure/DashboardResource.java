@@ -43,15 +43,15 @@ public class DashboardResource {
     @GET
     @Path("/stream")
     @Produces(MediaType.SERVER_SENT_EVENTS) // denotes that server side events (SSE) will be produced
-    @SseElementType("text/plain") // denotes that the contained data, within this SSE, is just regular text/plain data
+    @SseElementType("application/json") // denotes that the contained data, within this SSE, is just regular text/plain data
     public Publisher<DashboardUpdate> dashboardStream() {
         return updater;
     }
 
     @GET
-    @Path("/rewards/stream") // ← 新しく追加。重複回避！
+    @Path("/rewards/stream") 
     @Produces(MediaType.SERVER_SENT_EVENTS)
-    @SseElementType("application/json") // JSONで送るなら明示的に
+    @SseElementType("application/json")
     public Publisher<RewardEvent> streamRewards() {
         return rewards;
     }

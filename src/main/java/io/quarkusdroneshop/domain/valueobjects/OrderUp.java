@@ -65,4 +65,15 @@ public class OrderUp {
     public void setRewardPoints(BigDecimal rewardPoints) {
         this.rewardPoints = rewardPoints;
     }
+
+    private String madeBy;
+
+    public String getMadeBy() {
+        return madeBy;
+    }
+
+    public void setMadeBy(String madeBy) {
+        this.madeBy = madeBy;
+    }
+
 }

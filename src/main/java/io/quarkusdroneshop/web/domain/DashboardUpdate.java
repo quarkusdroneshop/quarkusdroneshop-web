@@ -5,16 +5,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkusdroneshop.domain.*;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.util.UUID;
+
 @RegisterForReflection
 public class DashboardUpdate {
 
-    public final String orderId;
+    public final UUID orderId;
 
-    public final String itemId;
+    public final UUID itemId;
 
     public final String name;
 
-    public final Item item;
+    public final String item;
 
     public final OrderStatus status;
 
@@ -22,10 +24,10 @@ public class DashboardUpdate {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public DashboardUpdate(
-            @JsonProperty("orderId") final String orderId,
-            @JsonProperty("itemId") String itemId,
+            @JsonProperty("orderId") final UUID orderId,
+            @JsonProperty("itemId") UUID itemId,
             @JsonProperty("name") String name,
-            @JsonProperty("item") Item item,
+            @JsonProperty("item") String item,
             @JsonProperty("status") OrderStatus status,
             @JsonProperty("madeBy") String madeBy) {
         this.orderId = orderId;
@@ -35,5 +37,4 @@ public class DashboardUpdate {
         this.status = status;
         this.madeBy = madeBy;
     }
-
 }

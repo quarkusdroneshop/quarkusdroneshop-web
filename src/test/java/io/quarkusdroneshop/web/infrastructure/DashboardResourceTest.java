@@ -20,8 +20,10 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.sse.InboundSseEvent;
 import javax.ws.rs.sse.SseEventSource;
 import java.net.URI;
+import java.util.UUID;
 import java.net.URISyntaxException;
 import java.util.function.Consumer;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -42,10 +44,10 @@ public class DashboardResourceTest {
     public void testStreaming() {
 
         DashboardUpdate dashboardUpdate = new DashboardUpdate(
-                "82124c69-a108-4ccc-9ac4-64566e389178",
-                "f84cb5e2-a3fd-43af-8df8-b5d74b133115",
+                UUID.fromString("82124c69-a108-4ccc-9ac4-64566e389178"),
+                UUID.fromString("f84cb5e2-a3fd-43af-8df8-b5d74b133115"),
                 "Scotty",
-                Item.QDC_A101,
+                "QDC_A101",
                 OrderStatus.IN_QUEUE,
                 null
         );
