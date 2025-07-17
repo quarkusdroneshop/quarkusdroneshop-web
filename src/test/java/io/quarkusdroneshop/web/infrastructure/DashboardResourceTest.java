@@ -40,41 +40,41 @@ public class DashboardResourceTest {
     @Any
     InMemoryConnector connector;
 
-    // @Test
-    // public void testStreaming() {
+    @Test
+    public void testStreaming() {
 
-    //     DashboardUpdate dashboardUpdate = new DashboardUpdate(
-    //             UUID.fromString("82124c69-a108-4ccc-9ac4-64566e389178"),
-    //             UUID.fromString("f84cb5e2-a3fd-43af-8df8-b5d74b133115"),
-    //             "Scotty",
-    //             "QDC_A101",
-    //             OrderStatus.IN_QUEUE,
-    //             null
-    //     );
+        DashboardUpdate dashboardUpdate = new DashboardUpdate(
+                UUID.fromString("82124c69-a108-4ccc-9ac4-64566e389178"),
+                UUID.fromString("f84cb5e2-a3fd-43af-8df8-b5d74b133115"),
+                "Scotty",
+                "QDC_A101",
+                OrderStatus.IN_QUEUE,
+                null
+        );
 
-    //     LOGGER.info("{}", dashboardUpdate);
+        LOGGER.info("{}", dashboardUpdate);
 
-    //     URI uri = null;
-    //     try {
-    //         uri = new URI("http://localhost:8080/dashboard/stream");
-    //     } catch (URISyntaxException e) {
-    //         assertNull(e);
-    //     }
-    //     Client client = ClientBuilder.newClient();
-    //     WebTarget target = client.target(uri);
+        URI uri = null;
+        try {
+            uri = new URI("http://localhost:8080/dashboard/stream");
+        } catch (URISyntaxException e) {
+            assertNull(e);
+        }
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(uri);
 
-    //     SseEventSource sseEventSource = SseEventSource.target(target).build();
-    //     sseEventSource.register(onEvent, onError, onComplete);
-    //     sseEventSource.open();
+        SseEventSource sseEventSource = SseEventSource.target(target).build();
+        sseEventSource.register(onEvent, onError, onComplete);
+        sseEventSource.open();
 
-    //     // marshall the JSON payload
-    //     String formattedUpdate = JsonUtil.toJson(dashboardUpdate);
+        // marshall the JSON payload
+        String formattedUpdate = JsonUtil.toJson(dashboardUpdate);
 
-    //     // send the JSON payload
-    //     InMemorySource<String> source = connector.source("web-updates");
-    //     source.send(formattedUpdate);
-    //     LOGGER.info("updates sent {}", formattedUpdate);
-    // }
+        // send the JSON payload
+        InMemorySource<String> source = connector.source("web-updates");
+        source.send(formattedUpdate);
+        LOGGER.info("updates sent {}", formattedUpdate);
+    }
 
     // verify that the event matches our expectations
     private static Consumer<InboundSseEvent> onEvent = (inboundSseEvent) -> {

@@ -60,33 +60,33 @@ public class OrderServiceTest {
     @Inject
     OrderService orderService;
 
-    // @Test
-    // public void testOrderServicerOrderIn() throws Exception {
-    //     InMemorySink<String> sink = connector.sink("orders-up");
+    @Test
+    public void testOrderServicerOrderIn() throws Exception {
+        InMemorySink<String> sink = connector.sink("orders-up");
 
-    //     PlaceOrderCommand placeOrderCommand = new PlaceOrderCommand(
-    //             "82124c69-a108-4ccc-9ac4-64566e389178",
-    //             "ATLANTA",
-    //             OrderSource.WEB,
-    //             null,
-    //             Arrays.asList(new OrderLineItem(Item.QDC_A101, BigDecimal.valueOf(135.50), "Bugs")),
-    //             null,
-    //             BigDecimal.valueOf(135.50)
-    //     );
+        PlaceOrderCommand placeOrderCommand = new PlaceOrderCommand(
+                "82124c69-a108-4ccc-9ac4-64566e389178",
+                "ATLANTA",
+                OrderSource.WEB,
+                null,
+                Arrays.asList(new OrderLineItem(Item.QDC_A101, BigDecimal.valueOf(135.50), "Bugs")),
+                null,
+                BigDecimal.valueOf(135.50)
+        );
 
-    //     orderService.placeOrder(placeOrderCommand);
+        orderService.placeOrder(placeOrderCommand);
 
-    //     assertEquals(1, sink.received().size(), "1 message should be sent");
+        assertEquals(1, sink.received().size(), "1 message should be sent");
 
-    //     String receivedPayload = sink.received().get(0).getPayload();
-    //     LOGGER.info("payload received: {}", receivedPayload);
+        String receivedPayload = sink.received().get(0).getPayload();
+        LOGGER.info("payload received: {}", receivedPayload);
 
-    //     ObjectMapper mapper = new ObjectMapper();
-    //     JsonNode expectedJson = mapper.readTree(expectedPayload);
-    //     JsonNode actualJson = mapper.readTree(receivedPayload);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode expectedJson = mapper.readTree(expectedPayload);
+        JsonNode actualJson = mapper.readTree(receivedPayload);
 
-    //     assertEquals(expectedJson, actualJson, "payload JSON should match");
-    // }
+        assertEquals(expectedJson, actualJson, "payload JSON should match");
+    }
 
     private static Consumer<InboundSseEvent> onEvent = (inboundSseEvent) -> {
         String data = inboundSseEvent.readData();
