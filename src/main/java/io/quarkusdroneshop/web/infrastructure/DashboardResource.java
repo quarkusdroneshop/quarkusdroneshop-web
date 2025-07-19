@@ -36,7 +36,7 @@ public class DashboardResource {
     Publisher<DashboardUpdate> updater;
 
     @Inject
-    @Channel("rewards") // Kafka topic 'rewards' に接続している SmallRye チャネル
+    @Channel("rewards")
     @Broadcast
     Publisher<RewardEvent> rewards;
 
