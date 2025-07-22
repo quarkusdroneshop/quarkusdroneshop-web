@@ -7,7 +7,43 @@ metadata:
     app: web
   annotations:
     github.com/project-slug: quarkusdroneshop/web
+    backstage.io/kubernetes-label-selector: 'app=web'
+    backstage.io/kubernetes-namespace: quarkusdroneshop-demo
+    backstage.io/kubernetes-cluster: a-cluster
 spec:
-  type: website
+  type: service
   owner: user:default/nmushino
   lifecycle: production
+  system: a-cluster
+  providesApis:
+    - quarkusdroneshop-web-api
+  kubernetes:
+    serviceLocatorMethod: 'multiTenant'
+    auth:
+      defaultAuthType: serviceAccount
+    clusters:
+      - name: a-cluster
+        skipTLSVerify: true
+        authProvider: serviceAccount
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: quarkusdroneshop-counter-api
+  description: カウンター業務API
+spec:
+  type: openapi
+  lifecycle: production
+  owner: user:default/nmushino
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: quarkusdroneshop-counter API
+      version: 5.2.0
+    paths:
+      /order:
+        get:
+          summary: オーダ情報を取得
+          responses:
+            '200':
+              description: OK
