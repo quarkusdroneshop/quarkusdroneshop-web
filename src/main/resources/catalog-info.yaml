@@ -29,8 +29,8 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: quarkusdroneshop-counter-api
-  description: カウンター業務API
+  name: quarkusdroneshop-web-api
+  description: オーダ情報API
 spec:
   type: openapi
   lifecycle: production
@@ -38,7 +38,7 @@ spec:
   definition: |
     openapi: 3.0.0
     info:
-      title: quarkusdroneshop-counter API
+      title: quarkusdroneshop-web API
       version: 5.2.0
     paths:
       /order:
