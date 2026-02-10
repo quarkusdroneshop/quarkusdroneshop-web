@@ -387,31 +387,31 @@ function displayFriendlyStatus(status){
     return result;
 }
 
-function displayRewardPoint(){
+function displayRewardPoint(customerEmail){
     const rewardPointsEl = document.getElementById('rewardPoints');
-    const rewardEventSource = new EventSource(rewardUrl);
 
-    const accumulatedRewards = {};
+    // 既存 SSE があれば必ず閉じる
+    if (rewardEventSource) {
+        rewardEventSource.close();
+    }
+
+    // 表示をリセット
+    rewardPointsEl.textContent = "";
+
+    rewardEventSource = new EventSource(rewardUrl);
 
     rewardEventSource.onmessage = function(event) {
         const reward = JSON.parse(event.data);
         console.log("reward point", reward);
 
-        if (reward && reward.customerName && typeof reward.rewardAmount === "number") {
-            const name = reward.customerName;
-
-            if (!accumulatedRewards[name]) {
-                accumulatedRewards[name] = 0;
-            }
-            accumulatedRewards[name] += reward.rewardAmount;
-
-            const displayText = Object.entries(accumulatedRewards)
-                .map(([customerName, points]) => `POINT ${points.toFixed(2)} `)
-                .join(' | ');
-
-            if (rewardPointsEl) {
-                rewardPointsEl.textContent = displayText;
-            }
+        // 今ログイン中のユーザだけ表示
+        if (
+            reward &&
+            reward.customerName === customerEmail &&
+            typeof reward.rewardAmount === "number"
+        ) {
+            rewardPointsEl.textContent =
+                `POINT ${reward.rewardAmount.toFixed(2)}`;
         }
     };
 
