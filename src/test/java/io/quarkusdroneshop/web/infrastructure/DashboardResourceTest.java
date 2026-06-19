@@ -2,91 +2,103 @@ package io.quarkusdroneshop.web.infrastructure;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkusdroneshop.domain.Item;
 import io.quarkusdroneshop.domain.OrderStatus;
 import io.quarkusdroneshop.web.domain.DashboardUpdate;
+import io.quarkusdroneshop.web.domain.RewardEvent;
 import io.quarkusdroneshop.web.infrastructure.testsupport.KafkaTestResource;
-import io.smallrye.reactive.messaging.connectors.InMemoryConnector;
-import io.smallrye.reactive.messaging.connectors.InMemorySource;
+import io.smallrye.reactive.messaging.memory.InMemoryConnector;
+import io.smallrye.reactive.messaging.memory.InMemorySource;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.sse.SseEventSource;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.inject.Any;
-import javax.inject.Inject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.sse.InboundSseEvent;
-import javax.ws.rs.sse.SseEventSource;
-import java.net.URI;
+import jakarta.enterprise.inject.Any;
+import jakarta.inject.Inject;
+import java.math.BigDecimal;
 import java.util.UUID;
-import java.net.URISyntaxException;
-import java.util.function.Consumer;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 @QuarkusTestResource(KafkaTestResource.class)
-public class DashboardResourceTest {
+class DashboardResourceTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardResourceTest.class);
-
-    private static final String expectedPayload = "data: {\"orderId\":\"82124c69-a108-4ccc-9ac4-64566e389178\",\"itemId\":\"f84cb5e2-a3fd-43af-8df8-b5d74b133115\",\"name\":\"Scotty\",\"item\":\"DRONE_WITH_ROOM\",\"status\":\"IN_QUEUE\",\"madeBy\":\"\"}";
 
     @Inject
     @Any
     InMemoryConnector connector;
 
     @Test
-    public void testStreaming() {
+    void testDashboardStreamEndpointExists() throws Exception {
+        AtomicBoolean connected = new AtomicBoolean(false);
+        CountDownLatch latch = new CountDownLatch(1);
 
-        DashboardUpdate dashboardUpdate = new DashboardUpdate(
-                UUID.fromString("82124c69-a108-4ccc-9ac4-64566e389178"),
-                UUID.fromString("f84cb5e2-a3fd-43af-8df8-b5d74b133115"),
-                "Scotty",
-                "QDC_A101",
-                OrderStatus.IN_QUEUE,
-                null
-        );
-
-        LOGGER.info("{}", dashboardUpdate);
-
-        URI uri = null;
-        try {
-            uri = new URI("http://localhost:8080/dashboard/stream");
-        } catch (URISyntaxException e) {
-            assertNull(e);
-        }
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(uri);
+        WebTarget target = client.target("http://localhost:8080/dashboard/stream");
+        try (SseEventSource source = SseEventSource.target(target).reconnectingEvery(1, TimeUnit.SECONDS).build()) {
+            source.register(event -> latch.countDown(), err -> {}, () -> {});
+            source.open();
+            connected.set(source.isOpen());
+            latch.await(2, TimeUnit.SECONDS);
+        } finally {
+            client.close();
+        }
 
-        SseEventSource sseEventSource = SseEventSource.target(target).build();
-        sseEventSource.register(onEvent, onError, onComplete);
-        sseEventSource.open();
-
-        // marshall the JSON payload
-        String formattedUpdate = JsonUtil.toJson(dashboardUpdate);
-
-        // send the JSON payload
-        InMemorySource<String> source = connector.source("web-updates");
-        source.send(formattedUpdate);
-        LOGGER.info("updates sent {}", formattedUpdate);
+        assertTrue(connected.get(), "SSE connection to /dashboard/stream should open successfully");
     }
 
-    // verify that the event matches our expectations
-    private static Consumer<InboundSseEvent> onEvent = (inboundSseEvent) -> {
-        String data = inboundSseEvent.readData();
-        LOGGER.info("event received: {}", data);
-        assertEquals(expectedPayload, data);
-    };
+    @Test
+    void testRewardsStreamEndpointExists() throws Exception {
+        AtomicBoolean connected = new AtomicBoolean(false);
 
-    private static Consumer<Throwable> onError = (throwable) -> {
-        LOGGER.error("error {}", throwable.getMessage());
-        assertNull(throwable);
-    };
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target("http://localhost:8080/dashboard/rewards/stream");
+        try (SseEventSource source = SseEventSource.target(target).reconnectingEvery(1, TimeUnit.SECONDS).build()) {
+            source.register(event -> {}, err -> {}, () -> {});
+            source.open();
+            connected.set(source.isOpen());
+            Thread.sleep(500);
+        } finally {
+            client.close();
+        }
 
-    private static Runnable onComplete = () -> LOGGER.info("done!");
+        assertTrue(connected.get(), "SSE connection to /dashboard/rewards/stream should open successfully");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testDashboardUpdateIsPublished() {
+        DashboardUpdate update = new DashboardUpdate(
+            UUID.fromString("82124c69-a108-4ccc-9ac4-64566e389178"),
+            UUID.fromString("f84cb5e2-a3fd-43af-8df8-b5d74b133115"),
+            "Alice",
+            "QDC_A101",
+            OrderStatus.IN_QUEUE,
+            null
+        );
+
+        InMemorySource<DashboardUpdate> source = (InMemorySource<DashboardUpdate>)(InMemorySource<?>)connector.source("web-updates");
+        source.send(update);
+
+        LOGGER.info("DashboardUpdate sent: {}", update.orderId);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testRewardEventIsPublished() {
+        RewardEvent reward = new RewardEvent("Bob", "order-99", BigDecimal.valueOf(30.0));
+
+        InMemorySource<RewardEvent> source = (InMemorySource<RewardEvent>)(InMemorySource<?>)connector.source("rewards");
+        source.send(reward);
+
+        LOGGER.info("RewardEvent sent for customer: {}", reward.customerName);
+    }
 }

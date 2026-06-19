@@ -1,6 +1,6 @@
 package io.quarkusdroneshop.domain;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @ApplicationScoped

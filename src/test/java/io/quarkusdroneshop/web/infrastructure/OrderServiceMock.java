@@ -6,8 +6,8 @@ import io.quarkusdroneshop.web.domain.commands.PlaceOrderCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
 import java.util.concurrent.CompletableFuture;
 
 
