@@ -20,6 +20,7 @@ spec:
   lifecycle: production
   system: sandbox1332
   dependsOn:
+    - component:quarkusdroneshop-counter
     - resource:shop-cluster-kafka
     - resource:shop-web-updates
     - resource:shop-loyalty-updates
