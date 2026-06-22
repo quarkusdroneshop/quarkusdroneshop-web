@@ -6,35 +6,37 @@ metadata:
   labels:
     app: web
   annotations:
-    github.com/project-slug: quarkusdroneshop/web
-    backstage.io/kubernetes-label-selector: 'app=web'
-    backstage.io/kubernetes-namespace: quarkusdroneshop-demo
-    backstage.io/kubernetes-cluster: a-cluster
+    github.com/project-slug: quarkusdroneshop/quarkusdroneshop-web
+    backstage.io/kubernetes-id: quarkusdroneshop-web
+    backstage.io/kubernetes-cluster: sandbox1332
+    backstage.io/kubernetes-label-selector: app.kubernetes.io/instance=quarkusdroneshop-web
+    tektonci.io/pipeline: build-and-push-quarkusdroneshop-web
+    tektonci.io/pipelineNamespace: quarkusdroneshop-cicd
+    tekton.dev/cicd: "true"
+    janus-idp.io/tekton: "true"
 spec:
   type: service
   owner: user:default/nmushino
   lifecycle: production
-  system: a-cluster
+  system: sandbox1332
+  dependsOn:
+    - resource:shop-cluster-kafka
+    - resource:shop-web-updates
+    - resource:shop-loyalty-updates
+    - resource:shop-bsite-rewards
   providesApis:
     - quarkusdroneshop-web-api
-  kubernetes:
-    serviceLocatorMethod: 'multiTenant'
-    auth:
-      defaultAuthType: serviceAccount
-    clusters:
-      - name: a-cluster
-        skipTLSVerify: true
-        authProvider: serviceAccount
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: quarkusdroneshop-web-api
-  description: オーダ情報API
+  description: オーダ情報 REST API
 spec:
   type: openapi
   lifecycle: production
   owner: user:default/nmushino
+  system: sandbox1332
   definition: |
     openapi: 3.0.0
     info:
