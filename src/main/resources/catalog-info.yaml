@@ -25,6 +25,10 @@ spec:
     - resource:shop-web-updates
     - resource:shop-loyalty-updates
     - resource:shop-bsite-rewards
+  consumesApis:
+    - kafka-web-updates
+    - kafka-loyalty-updates
+    - kafka-shop-bsite-rewards
   providesApis:
     - quarkusdroneshop-web-api
 ---
