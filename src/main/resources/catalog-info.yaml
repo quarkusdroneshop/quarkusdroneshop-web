@@ -12,7 +12,8 @@ metadata:
     github.com/project-slug: quarkusdroneshop/quarkusdroneshop-web
     backstage.io/kubernetes-id: quarkusdroneshop-web
     backstage.io/kubernetes-cluster: a-cluster
-    backstage.io/kubernetes-label-selector: app.kubernetes.io/instance=quarkusdroneshop-web
+    backstage.io/kubernetes-namespace: quarkusdroneshop-demo
+    backstage.io/kubernetes-label-selector: app.kubernetes.io/instance=web
     tektonci.io/pipeline: build-and-push-quarkusdroneshop-web
     tektonci.io/pipelineNamespace: quarkusdroneshop-cicd
     tekton.dev/cicd: "true"
@@ -29,12 +30,12 @@ spec:
     - resource:shop-loyalty-updates
     - resource:shop-bsite-rewards
   consumesApis:
-    - quarkusdroneshop-web-web-updates
-    - quarkusdroneshop-web-loyalty-updates
-    - quarkusdroneshop-web-rewards
+    - kafka-web-updates
+    - kafka-loyalty-updates
+    - kafka-rewards
   providesApis:
     - quarkusdroneshop-web-api
-    - quarkusdroneshop-web-orders-up
+    - kafka-orders-in
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
@@ -58,3 +59,123 @@ spec:
           responses:
             '200':
               description: OK
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kafka-orders-in
+  description: "Kafka トピック: orders-in（注文受付）"
+  annotations:
+    backstage.io/kubernetes-cluster: a-cluster
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: user:default/nmushino
+  system: a-cluster
+  definition: |
+    asyncapi: 2.6.0
+    info:
+      title: orders-in
+      version: 1.0.0
+      description: Webからカウンターへの注文受付トピック
+    servers:
+      production:
+        url: shop-cluster-kafka-bootstrap:9092
+        protocol: kafka
+    channels:
+      orders-in:
+        description: 注文を受け付けるトピック
+        publish:
+          operationId: placeOrder
+          message:
+            name: PlaceOrderCommand
+            contentType: application/json
+            payload:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                item:
+                  type: string
+                quantity:
+                  type: integer
+                location:
+                  type: string
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kafka-web-updates
+  description: "Kafka トピック: web-updates（注文ステータス更新）"
+  annotations:
+    backstage.io/kubernetes-cluster: a-cluster
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: user:default/nmushino
+  system: a-cluster
+  definition: |
+    asyncapi: 2.6.0
+    info:
+      title: web-updates
+      version: 1.0.0
+      description: カウンターからWebへの注文ステータス更新トピック
+    servers:
+      production:
+        url: shop-cluster-kafka-bootstrap:9092
+        protocol: kafka
+    channels:
+      web-updates:
+        description: 注文ステータス更新を受信するトピック
+        subscribe:
+          operationId: receiveWebUpdate
+          message:
+            name: DashboardUpdate
+            contentType: application/json
+            payload:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                status:
+                  type: string
+                item:
+                  type: string
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kafka-loyalty-updates
+  description: "Kafka トピック: loyalty-updates（ロイヤリティ更新）"
+  annotations:
+    backstage.io/kubernetes-cluster: a-cluster
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: user:default/nmushino
+  system: a-cluster
+  definition: |
+    asyncapi: 2.6.0
+    info:
+      title: loyalty-updates
+      version: 1.0.0
+      description: ロイヤリティポイント更新通知トピック
+    servers:
+      production:
+        url: shop-cluster-kafka-bootstrap:9092
+        protocol: kafka
+    channels:
+      loyalty-updates:
+        description: ロイヤリティ更新情報を受信するトピック
+        subscribe:
+          operationId: receiveLoyaltyUpdate
+          message:
+            name: LoyaltyUpdate
+            contentType: application/json
+            payload:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                points:
+                  type: integer
