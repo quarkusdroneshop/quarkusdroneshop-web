@@ -410,8 +410,15 @@ function displayRewardPoint(customerEmail){
             reward.customerName === customerEmail &&
             typeof reward.rewardAmount === "number"
         ) {
-            rewardPointsEl.textContent =
-                `POINT ${reward.rewardAmount.toFixed(2)}`;
+            rewardPointsEl.textContent = Math.round(reward.rewardAmount);
+            const item = document.getElementById('rewardPointsItem');
+            if (item) item.style.display = '';
+            const badge = document.querySelector('.rewardPoints-badge');
+            if (badge) {
+                badge.classList.remove('point-pulse');
+                void badge.offsetWidth;
+                badge.classList.add('point-pulse');
+            }
         }
     };
 

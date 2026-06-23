@@ -3,12 +3,15 @@ kind: Component
 metadata:
   name: quarkusdroneshop-web
   description: Webサービス用のマイクロサービスです
+  tags:
+    - latest
+    - a-cluster
   labels:
     app: web
   annotations:
     github.com/project-slug: quarkusdroneshop/quarkusdroneshop-web
     backstage.io/kubernetes-id: quarkusdroneshop-web
-    backstage.io/kubernetes-cluster: b-cluster
+    backstage.io/kubernetes-cluster: a-cluster
     backstage.io/kubernetes-label-selector: app.kubernetes.io/instance=quarkusdroneshop-web
     tektonci.io/pipeline: build-and-push-quarkusdroneshop-web
     tektonci.io/pipelineNamespace: quarkusdroneshop-cicd
@@ -18,7 +21,7 @@ spec:
   type: web
   owner: user:default/nmushino
   lifecycle: production
-  system: b-cluster
+  system: a-cluster
   dependsOn:
     - component:quarkusdroneshop-counter
     - resource:shop-cluster-kafka
@@ -26,11 +29,12 @@ spec:
     - resource:shop-loyalty-updates
     - resource:shop-bsite-rewards
   consumesApis:
-    - kafka-web-updates
-    - kafka-loyalty-updates
-    - kafka-shop-bsite-rewards
+    - quarkusdroneshop-web-web-updates
+    - quarkusdroneshop-web-loyalty-updates
+    - quarkusdroneshop-web-rewards
   providesApis:
     - quarkusdroneshop-web-api
+    - quarkusdroneshop-web-orders-up
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
@@ -41,7 +45,7 @@ spec:
   type: openapi
   lifecycle: production
   owner: user:default/nmushino
-  system: b-cluster
+  system: a-cluster
   definition: |
     openapi: 3.0.0
     info:
