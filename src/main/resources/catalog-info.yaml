@@ -69,6 +69,11 @@ metadata:
   description: "Kafka トピック: orders-in（注文受付）"
   annotations:
     backstage.io/kubernetes-cluster: a-cluster
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.orders-in/schema"
+  links:
+    - url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.orders-in/schema"
+      title: データカタログ
+      icon: dashboard
 spec:
   type: asyncapi
   lifecycle: production
@@ -111,6 +116,11 @@ metadata:
   description: "Kafka トピック: web-updates（注文ステータス更新）"
   annotations:
     backstage.io/kubernetes-cluster: a-cluster
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.web-updates/schema"
+  links:
+    - url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.web-updates/schema"
+      title: データカタログ
+      icon: dashboard
 spec:
   type: asyncapi
   lifecycle: production
@@ -151,6 +161,11 @@ metadata:
   description: "Kafka トピック: loyalty-updates（ロイヤリティ更新）"
   annotations:
     backstage.io/kubernetes-cluster: a-cluster
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.loyalty-updates/schema"
+  links:
+    - url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.loyalty-updates/schema"
+      title: データカタログ
+      icon: dashboard
 spec:
   type: asyncapi
   lifecycle: production
