@@ -4,9 +4,9 @@ import org.apache.kafka.common.serialization.Deserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 
-import io.quarkusdroneshop.domain.Reward;
+import io.quarkusdroneshop.web.domain.RewardEvent;
 
-public class RewardEventDeserializer implements Deserializer<Reward> {
+public class RewardEventDeserializer implements Deserializer<RewardEvent> {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -14,11 +14,11 @@ public class RewardEventDeserializer implements Deserializer<Reward> {
     public void configure(Map<String, ?> configs, boolean isKey) {}
 
     @Override
-    public Reward deserialize(String topic, byte[] data) {
+    public RewardEvent deserialize(String topic, byte[] data) {
         try {
-            return mapper.readValue(data, Reward.class);
+            return mapper.readValue(data, RewardEvent.class);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to deserialize Reward", e);
+            throw new RuntimeException("Failed to deserialize RewardEvent", e);
         }
     }
 
