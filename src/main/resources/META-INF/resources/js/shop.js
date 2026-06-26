@@ -242,7 +242,7 @@ $(function () {
         var state = JSON.parse(e.data);
         if(state.status=="IN_PROGRESS")
             $("tbody").append(line(state));
-        if(state.status=="FULFILLED"){40
+        if(state.status=="FULFILLED"){
             console.log(state);
 //              $("#"+state.itemId).replaceWith(line(state));
 //              setTimeout(cleanup(state.itemId), 15000);
@@ -389,6 +389,8 @@ function displayFriendlyStatus(status){
 }
 
 function displayRewardPoint(customerEmail){
+    if (!customerEmail) return;
+
     const rewardPointsEl = document.getElementById('rewardPoints');
 
     // 既存 SSE があれば必ず閉じる
@@ -409,9 +411,9 @@ function displayRewardPoint(customerEmail){
         if (
             reward &&
             reward.customerName === customerEmail &&
-            typeof reward.rewardAmount === "number"
+            reward.rewardAmount != null
         ) {
-            rewardPointsEl.textContent = Math.round(reward.rewardAmount);
+            rewardPointsEl.textContent = Math.round(Number(reward.rewardAmount));
             const item = document.getElementById('rewardPointsItem');
             if (item) item.style.display = '';
             const badge = document.querySelector('.rewardPoints-badge');
