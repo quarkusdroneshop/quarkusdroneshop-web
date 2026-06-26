@@ -45,6 +45,12 @@ kind: API
 metadata:
   name: quarkusdroneshop-web-api
   description: オーダ情報 REST API
+  annotations:
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/service/apiServices/quarkusdroneshop-web?showDeletedTables=false"
+  links:
+    - url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/service/apiServices/quarkusdroneshop-web?showDeletedTables=false"
+      title: データカタログ
+      icon: dashboard
 spec:
   type: openapi
   lifecycle: production
