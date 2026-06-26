@@ -1,11 +1,12 @@
 const appvalues = document.querySelector('#appvalues');
 const storeId = appvalues.dataset.storeId;
 const streamUrl = appvalues.dataset.streamUrl;
-const loyaltyStreamUrl = appvalues.dataset.loyaltyStreamUrl;
+const loyaltyStreamUrl = appvalues.dataset.loyaltystreamUrl;
 const rewardUrl = appvalues.dataset.rewardUrl;
 
 // Rewards Stream EventSource - ポイント表示
 const rewardPointsEl = document.getElementById('rewardPoints');
+let rewardEventSource = null;
 
 /* Display the modal popup with selected data */
 $('#myModal').on('show.bs.modal', function (event) {
