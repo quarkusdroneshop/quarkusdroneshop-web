@@ -1,6 +1,6 @@
 package io.quarkusdroneshop.web.infrastructure;
 
-import io.quarkusdroneshop.domain.Reward;
+import io.quarkusdroneshop.web.domain.RewardEvent;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -13,10 +13,10 @@ class RewardEventDeserializerTest {
     void testDeserializeValid() {
         RewardEventDeserializer d = new RewardEventDeserializer();
         byte[] json = "{\"customerName\":\"Alice\",\"orderId\":\"o1\",\"rewardAmount\":10.5}".getBytes(StandardCharsets.UTF_8);
-        Reward r = d.deserialize("test-topic", json);
-        assertEquals("Alice", r.getCustomerName());
-        assertEquals("o1", r.getOrderId());
-        assertEquals(10.5, r.getPoints());
+        RewardEvent r = d.deserialize("test-topic", json);
+        assertEquals("Alice", r.customerName);
+        assertEquals("o1", r.orderId);
+        assertEquals(0, new java.math.BigDecimal("10.5").compareTo(r.rewardAmount));
     }
 
     @Test
