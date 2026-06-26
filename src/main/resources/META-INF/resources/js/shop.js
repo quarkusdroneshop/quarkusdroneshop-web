@@ -434,6 +434,7 @@ $('#rewards_modal').on('submit', function() {
     $('#rewards_display_id').text(rewards_id);
     $.cookie('rewards_email',rewards_id, 10);
     $('#btn_cancel').click();
+    displayRewardPoint(rewards_id);
 });
 
 $('#rewardsModal').on('shown.bs.modal', function() {
@@ -446,5 +447,5 @@ $( document ).ready(function() {
         $('#rewards_id').val(email);
         $('#rewards_display_id').text(email);
     }
-    displayRewardPoint();
+    displayRewardPoint(email);
 });
