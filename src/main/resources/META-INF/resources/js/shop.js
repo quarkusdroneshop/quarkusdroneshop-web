@@ -413,7 +413,8 @@ function displayRewardPoint(customerEmail){
             reward.customerName === customerEmail &&
             reward.rewardAmount != null
         ) {
-            rewardPointsEl.textContent = Math.round(Number(reward.rewardAmount));
+            const current = Number(rewardPointsEl.textContent) || 0;
+            rewardPointsEl.textContent = Math.round(current + Number(reward.rewardAmount));
             const item = document.getElementById('rewardPointsItem');
             if (item) item.style.display = '';
             const bell = document.querySelector('.reward-bell-icon');
