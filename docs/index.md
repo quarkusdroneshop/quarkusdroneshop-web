@@ -1,102 +1,139 @@
-# Docs
-Please see the Github Pages Site for complete documentation: [quarkusdroneshop.github.io](https://quarkusdroneshop.github.io)
+# Web マイクロサービス
 
-# Quarkus
+## 概要
 
-If you have not used Quarkus before: https://quarkus.io/
+Web はドローンショップの **フロントエンド・注文受付サービス** です。
 
-# quarkuscofeeshop-web
+- ブラウザ UI からのドローン注文を受け付け
+- REST API `/order` 経由でも注文可能
+- Kafka へ注文を送信し、リアルタイムでステータス更新を受信
+- ロイヤリティポイント更新の受信・表示
 
-This is the web frontend for the Quarkus Coffeeshop Application
+**フレームワーク**: Quarkus  
+**デプロイ先クラスター**: a-cluster
 
-Orders can be placed through the web UI or a REST endpoint "/order"
+---
 
-## Local Development
+## アーキテクチャ
 
-You will need to start the supporting services, Kafka and PostgreSQL, from the [quarkusdroneshop-support](https://github.com/quarkusdroneshop/quarkusdroneshop-support.git) project:
+```
+ブラウザ / REST クライアント
+        │
+        ▼ HTTP POST /order
+┌──────────────┐
+│  Web サービス │──► Kafka: orders-in ──► Counter
+│              │
+│              │◄── Kafka: web-updates（注文ステータス）
+│              │◄── Kafka: loyalty-updates（ポイント）
+│              │◄── Kafka: shop-bsite-rewards（リワード）
+└──────────────┘
+```
+
+### Kafka トピック一覧
+
+| トピック | 方向 | 説明 |
+|---------|------|------|
+| `orders-in` | 送信 | Counter への新規注文 |
+| `web-updates` | 受信 | 注文ステータス更新 |
+| `loyalty-updates` | 受信 | ロイヤリティポイント更新 |
+| `shop-bsite-rewards` | 受信 | リワード通知（b-cluster からのミラー） |
+
+### REST API
+
+| エンドポイント | メソッド | 説明 |
+|--------------|--------|------|
+| `/order` | GET | 現在の注文一覧取得 |
+| `/order` | POST | 新規注文送信 |
+
+---
+
+## ローカル開発
+
+### 前提条件
+
+- Java 17+
+- Docker / Docker Compose
+
+### 1. インフラ起動
 
 ```shell
 git clone https://github.com/quarkusdroneshop/quarkusdroneshop-support.git
+cd quarkusdroneshop-support
+docker compose up -d
 ```
 
-The services can be started with Docker compose from within the quarkusdroneshop-support directory:
+PostgreSQL・Kafka・Zookeeper が起動します。
+
+### 2. アプリケーション起動
 
 ```shell
-docker compose up
-```
-
-### Environment Variables
-
-This services uses the following environment variables, all of which are set in development mode:  
-
-NOTE: _Quarkus has a development mode that automatically listens for a debugger, watches for code changes and reloads your application immediately, and allows you to set application properties specifically for development.  You can learn more in Quarkus' getting started guide: https://quarkus.io/get-started_
-
-* KAFKA_BOOTSTRAP_SERVERS
-* STREAM_URL
-* CORS_ORIGINS
-
-If you wish to override these you can set them with the following (on Linux or a Mac):
-
-```shell script
-export KAFKA_BOOTSTRAP_SERVERS=localhost:9092 STREAM_URL=http://localhost:8080/dashboard/stream CORS_ORIGINS=http://localhost:8080 STORE_ID=ATLANTA
-```
-
-### Starting the app
-
-To start the app in Quarkus dev mode with:
-
-```shell script
+git clone https://github.com/quarkusdroneshop/quarkusdroneshop-web.git
+cd quarkusdroneshop-web
 ./mvnw clean compile quarkus:dev
 ```
 
-### Attaching a debugger
+ブラウザで http://localhost:8080 にアクセスして UI を確認できます。
 
-By default Quarkus listens on port 5005 for a debugger.  You can change this by appending the flag, "-Ddebug<<PORT NUMBER>>" as in the below examples.  The parameter is optional, of course:
+### 環境変数
 
-```shell script
-./mvnw clean compile quarkus:dev -Ddebug=5006
-```
+| 変数名 | デフォルト | 説明 |
+|--------|-----------|------|
+| `KAFKA_BOOTSTRAP_URLS` | `localhost:9092` | Kafka ブートストラップアドレス |
 
-### pgAdmin
-
-The docker-compose file starts an instance of pgAdmin4.  You can login with:
-* quarkus.shop@redhat.com/redhat-20
-
-You will need to create a connection to the Crunchy PostgreSQL database.  Use the following values:
-* General 
-** Name: pg10
-* Connection
-** Host: crunchy
-** Port: 5432
-** Maintenance database: postgres
-** Username: postgres
-** Password: redhat-20
-
-The settings are not currently persisted across restarts so they will have to be recreated each time "docker-compose up" is run
-
-## Containerizing the application (OPTIONAL)
-  
-Quarkus applications contain all the files needed to containerize the application yourself (you don't have to do this to run the app):
+### 注文送信テスト
 
 ```shell
-./mvnw clean package -Pnative -Dquarkus.native.container-build=true
-docker build -f src/main/docker/Dockerfile.native -t <<DOCKER_HUB_ID>>/quarkusdroneshop-web .
-export KAFKA_BOOTSTRAP_URLS=localhost:9092 STREAM_URL=http://localhost:8080/dashboard/stream CORS_ORIGINS=http://localhost:8080
-docker run -i --network="host" -e KAFKA_BOOTSTRAP_URLS=${KAFKA_BOOTSTRAP_URLS} -e STREAM_URL=${STREAM_URL} -e CORS_ORIGINS=${CORS_ORIGINS} <<DOCKER_HUB_ID>>/quarkusdroneshop-counter:latest
-docker images -a | grep web
-docker tag <<RESULT>> <<DOCKER_HUB_ID>>/quarkusdroneshop-web:<<VERSION>>
+curl -X POST http://localhost:8080/order \
+  -H "Content-Type: application/json" \
+  -d '{"item": "DRONE_A", "quantity": 1, "location": "HOME"}'
 ```
 
-### Containerizing the application in Native Mode (OPTIONAL)
+---
 
-Quarkus can also compile your Java application into a native binary (you don't have to do this to run the app):
-  
- ```shell
-export KAFKA_BOOTSTRAP_URLS=localhost:9092 STREAM_URL=http://localhost:8080/dashboard/stream CORS_ORIGINS=http://localhost:8080
-./mvnw clean package -Pnative -Dquarkus.native.container-build=true
-docker build -f src/main/docker/Dockerfile.native -t <<DOCKER_HUB_ID>>/quarkusdroneshop-web .
-docker run -i --network="host" -e STREAM_URL=${STREAM_URL} -e CORS_ORIGINS=${CORS_ORIGINS} -e KAFKA_BOOTSTRAP_URLS=${KAFKA_BOOTSTRAP_URLS} <<DOCKER_ID>>/quarkusdroneshop-web:latest
-docker images -a | grep web
-docker tag <<RESULT>> <<DOCKER_HUB_ID>>/quarkus-shop-web:<<VERSION>>
+## 本番デプロイ（Tekton Pipeline）
+
+### パイプライン概要
+
+```
+fetch-repository → semgrep-scan → maven-run → push-oc-apps
 ```
 
+| ステップ | 内容 |
+|---------|------|
+| `fetch-repository` | GitHub からソースをクローン |
+| `semgrep-scan` | SAST セキュリティスキャン（p/java, p/owasp-top-ten, p/secrets） |
+| `maven-run` | `clean verify -Dquarkus.package.jar.type=uber-jar` |
+| `push-oc-apps` | OpenShift a-cluster へビルド＆デプロイ |
+
+### 手動実行
+
+```shell
+tkn pipeline start build-and-push-quarkusdroneshop-web \
+  -n quarkusdroneshop-cicd \
+  --use-param-defaults
+```
+
+RHDH の **CI タブ** からパイプライン実行状況をリアルタイムで確認できます。
+
+---
+
+## テスト
+
+```shell
+# ユニットテスト
+./mvnw test
+
+# 統合テスト
+./mvnw verify
+
+# UI 確認（ローカル起動後）
+open http://localhost:8080
+```
+
+---
+
+## 注意事項
+
+- **Server-Sent Events (SSE)**: ステータス更新は SSE でブラウザにプッシュ配信。ロードバランサーのタイムアウト設定（60秒以上）に注意。
+- **Kafka トピック名**: `shop-bsite-rewards` は b-cluster から MirrorMaker2 でミラーリングされたトピック。
+- **CORS**: 本番環境では `quarkus.http.cors.origins` を適切に設定してください。
