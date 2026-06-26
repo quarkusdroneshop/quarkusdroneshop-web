@@ -416,12 +416,15 @@ function displayRewardPoint(customerEmail){
             rewardPointsEl.textContent = Math.round(Number(reward.rewardAmount));
             const item = document.getElementById('rewardPointsItem');
             if (item) item.style.display = '';
-            const badge = document.querySelector('.rewardPoints-badge');
-            if (badge) {
-                badge.classList.remove('point-pulse');
-                void badge.offsetWidth;
-                badge.classList.add('point-pulse');
+            const bell = document.querySelector('.reward-bell-icon');
+            if (bell) {
+                bell.classList.remove('bell-ring');
+                void bell.offsetWidth;
+                bell.classList.add('bell-ring');
             }
+            rewardPointsEl.classList.remove('pts-pop');
+            void rewardPointsEl.offsetWidth;
+            rewardPointsEl.classList.add('pts-pop');
         }
     };
 

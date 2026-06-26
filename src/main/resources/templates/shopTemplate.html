@@ -61,11 +61,15 @@
                 <li><a href="#testimonials">Twitter</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li id="rewards_link" class="nav-item"><a class="nav-link" data-toggle="modal" data-target="#rewardsModal">Rewards</a></li>
-                <li id="rewardPointsItem" style="display:none; padding-top: 8px;">
-                    <a class="rewardPoints-badge">
-                        <i class="fa fa-star"></i>
-                        <span id="rewardPoints">0</span> pts
-                    </a>
+                <li id="rewardPointsItem" class="nav-item reward-chip-item" style="display:none;">
+                    <span class="reward-chip">
+                        <span class="reward-bell-wrap">
+                            <i class="fa fa-bell reward-bell-icon" aria-hidden="true"></i>
+                            <span class="reward-dot"></span>
+                        </span>
+                        <span id="rewardPoints" class="reward-pts-num">0</span>
+                        <span class="reward-pts-label">pts</span>
+                    </span>
                 </li>
             </ul>
         </div>
