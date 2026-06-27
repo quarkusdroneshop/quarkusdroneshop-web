@@ -31,11 +31,15 @@ public class MenuItem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MenuItem menuItem = (MenuItem) o;
-        return item == menuItem.item &&
-                Objects.equals(price, menuItem.price);
+        return item == menuItem.item
+                && Objects.equals(price, menuItem.price);
     }
 
     @Override

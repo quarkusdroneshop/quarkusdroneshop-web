@@ -28,19 +28,19 @@ public class WebOrderCommand {
 
         if (placeOrderCommand.getqdca10Items().isPresent()) {
             this.qdca10LineItems = placeOrderCommand.getqdca10Items().get();
-        }else{
+        } else {
             this.qdca10LineItems = new ArrayList<>(0);
         }
 
         if (placeOrderCommand.getqdca10proItems().isPresent()) {
             this.qdca10proLineItems = placeOrderCommand.getqdca10proItems().get();
-        }else {
+        } else {
             this.qdca10proLineItems = new ArrayList<>(0);
         }
 
         if (placeOrderCommand.getRewardsId().isPresent()) {
             this.loyaltyMemberId = placeOrderCommand.getRewardsId().get();
-        }else{
+        } else {
             this.loyaltyMemberId = null;
         }
     }
@@ -60,18 +60,30 @@ public class WebOrderCommand {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         WebOrderCommand that = (WebOrderCommand) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (orderSource != null ? !orderSource.equals(that.orderSource) : that.orderSource != null) return false;
-        if (!Objects.equals(location, that.location)) return false;
-        if (!Objects.equals(loyaltyMemberId, that.loyaltyMemberId))
+        if (!Objects.equals(id, that.id)) {
             return false;
-        if (!Objects.equals(qdca10LineItems, that.qdca10LineItems))
+        }
+        if (orderSource != null ? !orderSource.equals(that.orderSource) : that.orderSource != null) {
             return false;
+        }
+        if (!Objects.equals(location, that.location)) {
+            return false;
+        }
+        if (!Objects.equals(loyaltyMemberId, that.loyaltyMemberId)) {
+            return false;
+        }
+        if (!Objects.equals(qdca10LineItems, that.qdca10LineItems)) {
+            return false;
+        }
         return Objects.equals(qdca10proLineItems, that.qdca10proLineItems);
     }
 

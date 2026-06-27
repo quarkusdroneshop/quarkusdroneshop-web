@@ -15,8 +15,6 @@ import org.eclipse.microprofile.reactive.messaging.Message;
 import io.smallrye.reactive.messaging.kafka.KafkaRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.smallrye.reactive.messaging.kafka.KafkaRecord;
-import org.eclipse.microprofile.reactive.messaging.Message;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -27,7 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.concurrent.CompletableFuture;
-import java.util.Optional;
 
 import static io.quarkusdroneshop.web.infrastructure.JsonUtil.toJson;
 

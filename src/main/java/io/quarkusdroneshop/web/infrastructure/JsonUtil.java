@@ -11,12 +11,12 @@ public class JsonUtil {
 
     static Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
-    static final ObjectMapper objectMapper = new ObjectMapper();
+    static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     static String toJson(final Object object) {
         logger.debug("marshalling {} to JSON", object.toString());
         try {
-            return objectMapper.writeValueAsString(object);
+            return OBJECT_MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
             return "{ \"error\" : \"" + e.getMessage() + "\" }";

@@ -2,7 +2,7 @@ package io.quarkusdroneshop.web.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.quarkusdroneshop.domain.*;
+import io.quarkusdroneshop.domain.OrderStatus;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.UUID;

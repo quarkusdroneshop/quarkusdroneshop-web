@@ -2,7 +2,6 @@ package io.quarkusdroneshop.domain;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

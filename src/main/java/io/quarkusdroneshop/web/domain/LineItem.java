@@ -33,13 +33,21 @@ public class LineItem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         LineItem lineItem = (LineItem) o;
 
-        if (item != lineItem.item) return false;
-        if (!Objects.equals(name, lineItem.name)) return false;
+        if (item != lineItem.item) {
+            return false;
+        }
+        if (!Objects.equals(name, lineItem.name)) {
+            return false;
+        }
         return Objects.equals(orderId, lineItem.orderId);
     }
 

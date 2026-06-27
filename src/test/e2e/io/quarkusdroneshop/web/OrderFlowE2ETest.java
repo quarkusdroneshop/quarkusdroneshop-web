@@ -1,4 +1,4 @@
-package io.quarkusdroneshop.web.e2e;
+package io.quarkusdroneshop.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,6 @@ import io.quarkusdroneshop.domain.OrderStatus;
 import io.quarkusdroneshop.domain.valueobjects.LoyaltyUpdate;
 import io.quarkusdroneshop.web.domain.DashboardUpdate;
 import io.quarkusdroneshop.web.domain.RewardEvent;
-import io.quarkusdroneshop.web.infrastructure.JsonUtil;
 import io.quarkusdroneshop.web.infrastructure.testsupport.KafkaTestResource;
 import io.restassured.response.Response;
 import io.smallrye.reactive.messaging.memory.InMemoryConnector;

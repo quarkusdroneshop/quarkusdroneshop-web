@@ -43,7 +43,8 @@ public class OrderPlacedEvent {
         this.qdca10pro.addAll(qdca10proList);
     }
 
-    public OrderPlacedEvent(String id, OrderSource orderSource, String rewardsId, List<LineItem> qdca10, List<LineItem> qdca10pro) {
+    public OrderPlacedEvent(String id, OrderSource orderSource, String rewardsId,
+            List<LineItem> qdca10, List<LineItem> qdca10pro) {
         this.id = id;
         this.orderSource = orderSource;
         this.rewardsId = rewardsId;
@@ -65,15 +66,19 @@ public class OrderPlacedEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         OrderPlacedEvent that = (OrderPlacedEvent) o;
-        return Objects.equals(id, that.id) &&
-                orderSource == that.orderSource &&
-                rewardsId == that.rewardsId &&
-                Objects.equals(qdca10, that.qdca10) &&
-                Objects.equals(qdca10pro, that.qdca10pro) &&
-                eventType == that.eventType;
+        return Objects.equals(id, that.id)
+                && orderSource == that.orderSource
+                && rewardsId == that.rewardsId
+                && Objects.equals(qdca10, that.qdca10)
+                && Objects.equals(qdca10pro, that.qdca10pro)
+                && eventType == that.eventType;
     }
 
     @Override
@@ -101,7 +106,9 @@ public class OrderPlacedEvent {
         return rewardsId;
     }
 
-    public void setRewardsId(String rewardsId) { this.rewardsId = rewardsId; }
+    public void setRewardsId(String rewardsId) {
+        this.rewardsId = rewardsId;
+    }
 
     public void setqdca10(List<LineItem> qdca10) {
         this.qdca10 = qdca10;

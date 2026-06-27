@@ -26,7 +26,8 @@ public class PlaceOrderCommand {
     public PlaceOrderCommand() {
     }
 
-    public PlaceOrderCommand(String id, String storeId, OrderSource orderSource, String rewardsId, List<OrderLineItem> qdca10Items, List<OrderLineItem> qdca10proItems, BigDecimal total) {
+    public PlaceOrderCommand(String id, String storeId, OrderSource orderSource, String rewardsId,
+            List<OrderLineItem> qdca10Items, List<OrderLineItem> qdca10proItems, BigDecimal total) {
         this.id = id;
         this.orderSource = orderSource;
         this.storeId = storeId;
@@ -64,17 +65,21 @@ public class PlaceOrderCommand {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PlaceOrderCommand that = (PlaceOrderCommand) o;
-        return commandType == that.commandType &&
-                Objects.equals(qdca10Items, that.qdca10Items) &&
-                Objects.equals(qdca10proItems, that.qdca10proItems) &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(storeId, that.storeId) &&
-                orderSource == that.orderSource &&
-                Objects.equals(rewardsId, that.rewardsId) &&
-                Objects.equals(total, that.total);
+        return commandType == that.commandType
+                && Objects.equals(qdca10Items, that.qdca10Items)
+                && Objects.equals(qdca10proItems, that.qdca10proItems)
+                && Objects.equals(id, that.id)
+                && Objects.equals(storeId, that.storeId)
+                && orderSource == that.orderSource
+                && Objects.equals(rewardsId, that.rewardsId)
+                && Objects.equals(total, that.total);
     }
 
     @Override

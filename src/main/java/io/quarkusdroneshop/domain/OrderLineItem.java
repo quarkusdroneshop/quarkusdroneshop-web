@@ -35,12 +35,16 @@ public class OrderLineItem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         OrderLineItem that = (OrderLineItem) o;
-        return item == that.item &&
-                Objects.equals(price, that.price) &&
-                Objects.equals(name, that.name);
+        return item == that.item
+                && Objects.equals(price, that.price)
+                && Objects.equals(name, that.name);
     }
 
     @Override

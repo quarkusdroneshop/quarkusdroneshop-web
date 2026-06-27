@@ -13,7 +13,8 @@ public class InQueueUpdate extends WebUpdate {
     }
 
     public InQueueUpdate(final LineItemEvent lineItemEvent) {
-        super(lineItemEvent.orderId, lineItemEvent.itemId, lineItemEvent.name, lineItemEvent.item, OrderStatus.IN_QUEUE);
+        super(lineItemEvent.orderId, lineItemEvent.itemId, lineItemEvent.name,
+                lineItemEvent.item, OrderStatus.IN_QUEUE);
     }
 
 }

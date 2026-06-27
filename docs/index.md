@@ -80,6 +80,11 @@ cd quarkusdroneshop-web
 |--------|-----------|------|
 | `KAFKA_BOOTSTRAP_URLS` | `localhost:9092` | Kafka ブートストラップアドレス |
 
+
+### テストフォルダ
+
+
+
 ### 注文送信テスト
 
 ```shell
@@ -120,11 +125,38 @@ RHDH の **CI タブ** からパイプライン実行状況をリアルタイム
 ## テスト
 
 ```shell
-# ユニットテスト
+# ユニットテスト(ArchUnit含む,PlayWright)
 ./mvnw test
 
-# 統合テスト
+# 統合テスト（Jacoco含む）
 ./mvnw verify
+
+# チェックスタイル
+./mvnw checkstyle:check
+
+# PMD
+./mvnw pmd:pmd
+
+# SpotBugs
+./mvnw spotbugs:spotbugs
+
+# semgrep 
+semgrep scan --config p/default --json > target/semgrep-results.json
+
+# secret scan
+gitleaks detect --source . --report-format json --report-path target/gitleaks-report.json --exit-code 1
+
+# 脆弱性テスト
+trivy fs --scanners vuln,secret,misconfig,license --exit-code=1 --ignorefile ./.trivyignore.yaml ./ > target/trivy.txt
+
+# セキュリティテスト
+mvn quarkus:dev > quarkus.log 2>&1 & QUARKUS_PID=$!; sleep 10; wapiti -u http://localhost:8080 -f json -o ./target/wapiti.json; kill $QUARKUS_PID
+
+# テストレポートの作成
+./mvnw exec:exec@generate-report
+
+# Webテストのレコーダ
+npx playwright codegen --target=java -o src/test/e2e/io/quarkusdroneshop/web/WebTest.java http://localhost:8080
 
 # UI 確認（ローカル起動後）
 open http://localhost:8080
@@ -133,7 +165,14 @@ open http://localhost:8080
 ---
 
 ## 注意事項
-
 - **Server-Sent Events (SSE)**: ステータス更新は SSE でブラウザにプッシュ配信。ロードバランサーのタイムアウト設定（60秒以上）に注意。
+- **Kafka トピック名**: `web-updates` は a-cluster のトピック。
+- **Kafka トピック名**: `loyalty-updates` は a-cluster のトピック。
 - **Kafka トピック名**: `shop-bsite-rewards` は b-cluster から MirrorMaker2 でミラーリングされたトピック。
 - **CORS**: 本番環境では `quarkus.http.cors.origins` を適切に設定してください。
+
+### Outgoing
+mp.messaging.outgoing.orders-up.connector=smallrye-kafka
+mp.messaging.outgoing.orders-up.value.serializer=org.apache.kafka.common.serialization.StringSerializer
+%prod.mp.messaging.outgoing.orders-up.topic=orders-in
+%dev.mp.messaging.outgoing.orders-up.topic=orders-in

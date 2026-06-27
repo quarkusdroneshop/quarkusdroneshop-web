@@ -16,9 +16,9 @@ import jakarta.ws.rs.core.MediaType;
 
 @RegisterForReflection
 @Path("/dashboard")
-public class LoyaltyDashboard {
+public class LoyaltyDashboardResource {
 
-    Logger logger = Logger.getLogger(LoyaltyDashboard.class);
+    Logger logger = Logger.getLogger(LoyaltyDashboardResource.class);
 
     @Inject
     @Channel("loyalty-updates")
@@ -28,7 +28,7 @@ public class LoyaltyDashboard {
     @GET
     @Path("/loyaltystream")
     @Produces(MediaType.SERVER_SENT_EVENTS) // denotes that server side events (SSE) will be produced
-    @RestStreamElementType("text/plain") // denotes that the contained data, within this SSE, is just regular text/plain data
+    @RestStreamElementType("text/plain")
     public Publisher<LoyaltyUpdate> dashboardStream() {
 
         return updater;

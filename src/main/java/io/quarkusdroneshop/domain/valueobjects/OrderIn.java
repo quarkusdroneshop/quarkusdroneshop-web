@@ -12,7 +12,8 @@ public class OrderIn {
 
     public OrderIn() {}
 
-    public OrderIn(String orderId, String lineItemId, String itemName, String customerName, int quantity, BigDecimal price) {
+    public OrderIn(String orderId, String lineItemId, String itemName,
+            String customerName, int quantity, BigDecimal price) {
         this.orderId = orderId;
         this.lineItemId = lineItemId;
         this.itemName = itemName;

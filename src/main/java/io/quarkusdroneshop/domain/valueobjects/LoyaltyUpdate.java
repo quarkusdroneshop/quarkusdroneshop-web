@@ -24,12 +24,18 @@ public class LoyaltyUpdate {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         LoyaltyUpdate that = (LoyaltyUpdate) o;
 
-        if (!Objects.equals(email, that.email)) return false;
+        if (!Objects.equals(email, that.email)) {
+            return false;
+        }
         return Objects.equals(reward, that.reward);
     }
 

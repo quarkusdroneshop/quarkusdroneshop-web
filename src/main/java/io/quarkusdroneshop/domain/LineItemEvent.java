@@ -5,7 +5,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.UUID;
 
 @RegisterForReflection
-public abstract class LineItemEvent implements Event{
+public abstract class LineItemEvent implements Event {
 
     public String itemId;
     public String orderId;

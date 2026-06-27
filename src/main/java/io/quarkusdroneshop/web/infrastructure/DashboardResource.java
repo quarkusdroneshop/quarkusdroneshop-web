@@ -34,7 +34,7 @@ public class DashboardResource {
     @GET
     @Path("/stream")
     @Produces(MediaType.SERVER_SENT_EVENTS) // denotes that server side events (SSE) will be produced
-    @RestStreamElementType("application/json") // denotes that the contained data, within this SSE, is just regular text/plain data
+    @RestStreamElementType("application/json")
     public Publisher<DashboardUpdate> dashboardStream() {
         return updater;
     }

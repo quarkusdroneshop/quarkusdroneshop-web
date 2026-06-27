@@ -3,7 +3,7 @@ package io.quarkusdroneshop.domain;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
-public class EightySixEvent implements Event{
+public class EightySixEvent implements Event {
 
         Item item;
 

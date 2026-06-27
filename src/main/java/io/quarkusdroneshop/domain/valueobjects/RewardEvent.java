@@ -43,10 +43,10 @@ public class RewardEvent {
 
     @Override
     public String toString() {
-        return "RewardEvent{" +
-                "customerName='" + customerName + '\'' +
-                ", orderId='" + orderId + '\'' +
-                ", points=" + points +
-                '}';
+        return "RewardEvent{"
+                + "customerName='" + customerName + '\''
+                + ", orderId='" + orderId + '\''
+                + ", points=" + points
+                + '}';
     }
 }

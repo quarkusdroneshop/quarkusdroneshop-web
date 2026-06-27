@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 @RegisterForReflection
-public class OrderUpEvent extends LineItemEvent{
+public class OrderUpEvent extends LineItemEvent {
 
     public String madeBy;
 
@@ -38,8 +38,12 @@ public class OrderUpEvent extends LineItemEvent{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         OrderUpEvent that = (OrderUpEvent) o;
         return Objects.equals(madeBy, that.madeBy);
     }
