@@ -29,7 +29,7 @@ spec:
   dependsOn:
     - component:quarkusdroneshop-counter
     - resource:shop-cluster-kafka-asite
-    - resource:shop-web-updates
+    - resource:shop-asite-web-updates
     - resource:shop-asite-loyalty-updates
     - resource:shop-bsite-rewards
   consumesApis:
