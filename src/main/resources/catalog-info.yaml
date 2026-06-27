@@ -28,9 +28,9 @@ spec:
   system: a-cluster
   dependsOn:
     - component:quarkusdroneshop-counter
-    - resource:shop-cluster-kafka
+    - resource:shop-cluster-kafka-asite
     - resource:shop-web-updates
-    - resource:shop-loyalty-updates
+    - resource:shop-asite-loyalty-updates
     - resource:shop-bsite-rewards
   consumesApis:
     - kafka-asite-web-updates
