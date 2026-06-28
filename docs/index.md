@@ -125,10 +125,10 @@ RHDH の **CI タブ** からパイプライン実行状況をリアルタイム
 ## テスト
 
 ```shell
-# ユニットテスト(ArchUnit含む,PlayWright)
+# ユニットテスト
 ./mvnw test
 
-# 統合テスト（Jacoco含む）
+# 統合テスト（Jacoco、ArchUnit含む,PlayWright含む）
 ./mvnw verify
 
 # チェックスタイル
@@ -149,7 +149,7 @@ gitleaks detect --source . --report-format json --report-path target/gitleaks-re
 # 脆弱性テスト
 trivy fs --scanners vuln,secret,misconfig,license --exit-code=1 --ignorefile ./.trivyignore.yaml ./ > target/trivy.txt
 
-# セキュリティテスト
+# ペネトレーションテスト
 mvn quarkus:dev > quarkus.log 2>&1 & QUARKUS_PID=$!; sleep 10; wapiti -u http://localhost:8080 -f json -o ./target/wapiti.json; kill $QUARKUS_PID
 
 # テストレポートの作成
