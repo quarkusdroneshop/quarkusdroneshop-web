@@ -231,6 +231,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
         <configuration>
+          <excludedGroups>e2e</excludedGroups>
           <includes>
             <include>**/*Test.java</include>
           </includes>

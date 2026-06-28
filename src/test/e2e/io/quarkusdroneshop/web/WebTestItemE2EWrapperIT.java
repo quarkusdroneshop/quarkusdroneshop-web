@@ -1,7 +1,9 @@
 package io.quarkusdroneshop.web;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag("e2e")
 public class WebTestItemE2EWrapperIT {
 
   @Test
