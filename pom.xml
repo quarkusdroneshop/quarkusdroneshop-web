@@ -237,6 +237,7 @@
           <excludes>
             <exclude>**/*E2ETest.java</exclude>
             <exclude>**/*E2E*.java</exclude>
+            <exclude>**/*IT.java</exclude>
           </excludes>
         </configuration>
       </plugin>
