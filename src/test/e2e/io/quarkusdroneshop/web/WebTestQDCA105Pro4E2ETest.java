@@ -12,7 +12,8 @@ public class WebTestQDCA105Pro4E2ETest {
         .setHeadless(true));
       BrowserContext context = browser.newContext();
       Page page = context.newPage();
-      page.navigate("http://localhost:8080/");
+      String appUrl = System.getProperty("app.url", "http://localhost:8080");
+      page.navigate(appUrl + "/");
       page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Place an Order")).click();
       // QDC-A105-Pro04 is the 9th Add button (nth 8)
       page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add")).nth(8).click();
