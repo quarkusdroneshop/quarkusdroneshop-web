@@ -236,7 +236,7 @@ function uuidv4() {
 $(function () {
     /* var source = new EventSource("http://quarkus-shop-web-quarkus-shop.apps.cluster-virtual-1b57.virtual-1b57.sandbox1482.opentlc.com/dashboard/stream"); */
 
-    var source = new EventSource(streamUrl);
+    var source = new EventSource('/dashboard/stream');
     source.onmessage = function(e) {
         console.log(e);
         var state = JSON.parse(e.data);
@@ -251,7 +251,7 @@ $(function () {
     };
 
     // Loyalty toast notification
-    var loyaltySource = new EventSource(loyaltyStreamUrl);
+    var loyaltySource = new EventSource('/dashboard/loyaltystream');
     loyaltySource.onmessage = function(e) {
         console.log(e);
         var localtyReward = JSON.parse(e.data);
@@ -401,7 +401,7 @@ function displayRewardPoint(customerEmail){
     // 表示をリセット
     rewardPointsEl.textContent = "";
 
-    rewardEventSource = new EventSource(rewardUrl);
+    rewardEventSource = new EventSource('/dashboard/rewards/stream');
 
     rewardEventSource.onmessage = function(event) {
         const reward = JSON.parse(event.data);
