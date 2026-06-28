@@ -439,7 +439,7 @@ $('#rewards_modal').on('submit', function() {
     let rewards_id = $('#rewards_id').val();
     console.log("rewards email entered: " + rewards_id);
     $('#rewards_display_id').text(rewards_id);
-    $.cookie('rewards_email',rewards_id, 10);
+    $.cookie('rewards_email', rewards_id, { expires: 10, path: '/', secure: window.location.protocol === 'https:', sameSite: 'Strict' });
     $('#btn_cancel').click();
     displayRewardPoint(rewards_id);
 });
