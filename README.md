@@ -1,102 +1,95 @@
-# Docs
-Please see the Github Pages Site for complete documentation: [quarkusdroneshop.github.io](https://quarkusdroneshop.github.io)
+# quarkusdroneshop-web
 
-# Quarkus
+Quarkus ベースの Web フロントエンドサービス。注文受付 REST API と、注文ステータスをリアルタイムに通知する Server-Sent Events (SSE) ダッシュボードを提供します。
 
-If you have not used Quarkus before: https://quarkus.io/
+- **バージョン**: 5.2.0
+- **Quarkus**: 3.36.3
 
-# quarkuscofeeshop-web
+## アーキテクチャ
 
-This is the web frontend for the Quarkus Coffeeshop Application
+```
+ブラウザ
+  │  POST /order または Web UI
+  ▼
+quarkusdroneshop-web ──▶ orders-in ──▶ quarkusdroneshop-counter
+                     ◀── web-updates
+                     ◀── loyalty-updates
+                     ◀── rewards (shop-bsite.rewards in prod)
+                     ──▶ /dashboard/stream (SSE) ──▶ ブラウザ
+```
 
-Orders can be placed through the web UI or a REST endpoint "/order"
+## エンドポイント
 
-## Local Development
+| パス | 説明 |
+|---|---|
+| `POST /order` | 注文受付 REST API |
+| `GET /dashboard/stream` | SSE ストリーム (注文ステータス更新) |
+| `GET /` | Web UI (注文フォーム + ダッシュボード) |
 
-You will need to start the supporting services, Kafka and PostgreSQL, from the [quarkusdroneshop-support](https://github.com/quarkusdroneshop/quarkusdroneshop-support.git) project:
+## Kafka トピック
+
+| チャネル | dev トピック | prod トピック | 方向 |
+|---|---|---|---|
+| orders-up (送信) | `orders-in` | `orders-in` | 送信 |
+| web-updates | `web-updates` | `web-updates` | 受信 |
+| loyalty-updates | `loyalty-updates` | `loyalty-updates` | 受信 |
+| rewards | `rewards` | `shop-bsite.rewards` | 受信 |
+
+## ローカル開発
 
 ```shell
 git clone https://github.com/quarkusdroneshop/quarkusdroneshop-support.git
-```
-
-The services can be started with Docker compose from within the quarkusdroneshop-support directory:
-
-```shell
+cd quarkusdroneshop-support
 docker compose up
 ```
 
-### Environment Variables
+```shell
+export KAFKA_BOOTSTRAP_SERVERS=localhost:9092 \
+  STREAM_URL=http://localhost:8080/dashboard/stream \
+  CORS_ORIGINS=http://localhost:8080 \
+  STORE_ID=ATLANTA
 
-This services uses the following environment variables, all of which are set in development mode:  
-
-NOTE: _Quarkus has a development mode that automatically listens for a debugger, watches for code changes and reloads your application immediately, and allows you to set application properties specifically for development.  You can learn more in Quarkus' getting started guide: https://quarkus.io/get-started_
-
-* KAFKA_BOOTSTRAP_SERVERS
-* STREAM_URL
-* CORS_ORIGINS
-
-If you wish to override these you can set them with the following (on Linux or a Mac):
-
-```shell script
-export KAFKA_BOOTSTRAP_SERVERS=localhost:9092 STREAM_URL=http://localhost:8080/dashboard/stream CORS_ORIGINS=http://localhost:8080 STORE_ID=ATLANTA
-```
-
-### Starting the app
-
-To start the app in Quarkus dev mode with:
-
-```shell script
 ./mvnw clean compile quarkus:dev
 ```
 
-### Attaching a debugger
+デバッガーポートを変更する場合:
 
-By default Quarkus listens on port 5005 for a debugger.  You can change this by appending the flag, "-Ddebug<<PORT NUMBER>>" as in the below examples.  The parameter is optional, of course:
-
-```shell script
+```shell
 ./mvnw clean compile quarkus:dev -Ddebug=5006
 ```
 
-### pgAdmin
+## 環境変数
 
-The docker-compose file starts an instance of pgAdmin4.  You can login with:
-* quarkus.shop@redhat.com/redhat-20
+| 変数名 | 説明 |
+|---|---|
+| `KAFKA_BOOTSTRAP_URLS` | Kafka ブローカー URL |
+| `STREAM_URL` | SSE エンドポイント URL (`/dashboard/stream`) |
+| `CORS_ORIGINS` | CORS 許可オリジン |
+| `STORE_ID` | 店舗識別子 (例: `ATLANTA`) |
 
-You will need to create a connection to the Crunchy PostgreSQL database.  Use the following values:
-* General 
-** Name: pg10
-* Connection
-** Host: crunchy
-** Port: 5432
-** Maintenance database: postgres
-** Username: postgres
-** Password: redhat-20
+## pgAdmin (開発環境)
 
-The settings are not currently persisted across restarts so they will have to be recreated each time "docker-compose up" is run
+docker-compose で pgAdmin4 が起動します:
+- URL: `http://localhost:5050`
+- ログイン: `quarkus.shop@redhat.com` / `redhat-20`
+- DB接続: Host=`crunchy`, Port=`5432`, DB=`postgres`, User=`postgres`, PW=`redhat-20`
 
-## Containerizing the application (OPTIONAL)
-  
-Quarkus applications contain all the files needed to containerize the application yourself (you don't have to do this to run the app):
+## パッケージング
 
 ```shell
+# ネイティブビルド
 ./mvnw clean package -Pnative -Dquarkus.native.container-build=true
-docker build -f src/main/docker/Dockerfile.native -t <<DOCKER_HUB_ID>>/quarkusdroneshop-web .
-export KAFKA_BOOTSTRAP_URLS=localhost:9092 STREAM_URL=http://localhost:8080/dashboard/stream CORS_ORIGINS=http://localhost:8080
-docker run -i --network="host" -e KAFKA_BOOTSTRAP_URLS=${KAFKA_BOOTSTRAP_URLS} -e STREAM_URL=${STREAM_URL} -e CORS_ORIGINS=${CORS_ORIGINS} <<DOCKER_HUB_ID>>/quarkusdroneshop-counter:latest
-docker images -a | grep web
-docker tag <<RESULT>> <<DOCKER_HUB_ID>>/quarkusdroneshop-web:<<VERSION>>
+docker build -f src/main/docker/Dockerfile.native -t <REGISTRY>/quarkusdroneshop-web .
+
+# 実行
+docker run -i --network="host" \
+  -e KAFKA_BOOTSTRAP_URLS=localhost:9092 \
+  -e STREAM_URL=http://localhost:8080/dashboard/stream \
+  -e CORS_ORIGINS=http://localhost:8080 \
+  <REGISTRY>/quarkusdroneshop-web:latest
 ```
 
-### Containerizing the application in Native Mode (OPTIONAL)
+## 参考
 
-Quarkus can also compile your Java application into a native binary (you don't have to do this to run the app):
-  
- ```shell
-export KAFKA_BOOTSTRAP_URLS=localhost:9092 STREAM_URL=http://localhost:8080/dashboard/stream CORS_ORIGINS=http://localhost:8080
-./mvnw clean package -Pnative -Dquarkus.native.container-build=true
-docker build -f src/main/docker/Dockerfile.native -t <<DOCKER_HUB_ID>>/quarkusdroneshop-web .
-docker run -i --network="host" -e STREAM_URL=${STREAM_URL} -e CORS_ORIGINS=${CORS_ORIGINS} -e KAFKA_BOOTSTRAP_URLS=${KAFKA_BOOTSTRAP_URLS} <<DOCKER_ID>>/quarkusdroneshop-web:latest
-docker images -a | grep web
-docker tag <<RESULT>> <<DOCKER_HUB_ID>>/quarkus-shop-web:<<VERSION>>
-```
-
+- [Quarkus](https://quarkus.io/)
+- [quarkusdroneshop.github.io](https://quarkusdroneshop.github.io)
