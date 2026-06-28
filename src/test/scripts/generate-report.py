@@ -183,7 +183,13 @@ if os.path.exists(arch_xml):
 
 surefire_suites = parse_test_dir_filtered(
     os.path.join(TARGET, "surefire-reports"), exclude_fqn=_ARCH_CLASS)
-failsafe_suites = parse_test_dir(os.path.join(TARGET, "failsafe-reports"))
+
+# failsafe-reports から E2E テスト（クラス名が E2ETest / E2E / IT で終わるもの）だけを抽出
+_E2E_RE = re.compile(r"(E2ETest|E2E|IT)$")
+failsafe_suites = [
+    s for s in parse_test_dir(os.path.join(TARGET, "failsafe-reports"))
+    if _E2E_RE.search(s["name"])
+]
 
 
 def stats(suites):
