@@ -9,14 +9,15 @@ metadata:
   labels:
     app: web
   annotations:
+    github.com/project-slug: quarkusdroneshop/quarkusdroneshop-web
     backstage.io/kubernetes-id: quarkusdroneshop-web
     backstage.io/kubernetes-cluster: a-cluster
     backstage.io/kubernetes-label-selector: app.kubernetes.io/instance=quarkusdroneshop-web
     argocd/app-selector: app.kubernetes.io/instance=quarkusdroneshop-web
+    tekton.dev/cicd: "true"
+    tekton.dev/type: pipeline
     tektonci.io/pipeline: build-and-push-quarkusdroneshop-web
     tektonci.io/pipelineNamespace: quarkusdroneshop-cicd
-    tekton.dev/type: pipeline
-    tekton.dev/cicd: "true"
     janus-idp.io/tekton: "true"
     rhdh.redhat.com/tekton-enabled: "true"
     backstage.io/techdocs-ref: dir:.
@@ -26,11 +27,181 @@ spec:
   owner: user:default/nmushino
   system: a-cluster
   dependsOn:
-    - resource:shop-cluster-kafka
+    - component:quarkusdroneshop-counter
+    - resource:shop-cluster-kafka-asite
     - resource:shop-asite-orders-in
+    - resource:shop-asite-web-updates
+    - resource:shop-asite-loyalty-updates
     - resource:droneshopdb-asite-postgresql
-  providesApis:
-    - kafka-asite-orders-in
+    - resource:shop-bsite-rewards
   consumesApis:
     - kafka-asite-web-updates
     - kafka-asite-loyalty-updates
+    - kafka-bsite-rewards
+  providesApis:
+    - quarkusdroneshop-web-api
+    - kafka-asite-orders-in
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: quarkusdroneshop-web-api
+  description: オーダ情報 REST API
+  annotations:
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/service/apiServices/quarkusdroneshop-web?showDeletedTables=false"
+  links:
+    - url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/service/apiServices/quarkusdroneshop-web?showDeletedTables=false"
+      title: データカタログ
+      icon: dashboard
+spec:
+  type: openapi
+  lifecycle: production
+  owner: user:default/nmushino
+  system: a-cluster
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: quarkusdroneshop-web API
+      version: 5.2.0
+    paths:
+      /order:
+        get:
+          summary: オーダ情報を取得
+          responses:
+            '200':
+              description: OK
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kafka-asite-orders-in
+  description: "Kafka トピック: orders-in（注文受付）"
+  annotations:
+    backstage.io/kubernetes-cluster: a-cluster
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.orders-in/schema"
+  links:
+    - url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.orders-in/schema"
+      title: データカタログ
+      icon: dashboard
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: user:default/nmushino
+  system: a-cluster
+  definition: |
+    asyncapi: 2.6.0
+    info:
+      title: orders-in
+      version: 1.0.0
+      description: Webからカウンターへの注文受付トピック
+    servers:
+      production:
+        url: shop-cluster-kafka-bootstrap:9092
+        protocol: kafka
+    channels:
+      orders-in:
+        description: 注文を受け付けるトピック
+        publish:
+          operationId: placeOrder
+          message:
+            name: PlaceOrderCommand
+            contentType: application/json
+            payload:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                item:
+                  type: string
+                quantity:
+                  type: integer
+                location:
+                  type: string
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kafka-asite-web-updates
+  description: "Kafka トピック: web-updates（注文ステータス更新）"
+  annotations:
+    backstage.io/kubernetes-cluster: a-cluster
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.web-updates/schema"
+  links:
+    - url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.web-updates/schema"
+      title: データカタログ
+      icon: dashboard
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: user:default/nmushino
+  system: a-cluster
+  definition: |
+    asyncapi: 2.6.0
+    info:
+      title: web-updates
+      version: 1.0.0
+      description: カウンターからWebへの注文ステータス更新トピック
+    servers:
+      production:
+        url: shop-cluster-kafka-bootstrap:9092
+        protocol: kafka
+    channels:
+      web-updates:
+        description: 注文ステータス更新を受信するトピック
+        subscribe:
+          operationId: receiveWebUpdate
+          message:
+            name: DashboardUpdate
+            contentType: application/json
+            payload:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                status:
+                  type: string
+                item:
+                  type: string
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kafka-asite-loyalty-updates
+  description: "Kafka トピック: loyalty-updates（ロイヤリティ更新）"
+  annotations:
+    backstage.io/kubernetes-cluster: a-cluster
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.loyalty-updates/schema"
+  links:
+    - url: "http://openmetadata-openmetadata.apps.ocp.hfczn.sandbox2320.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.loyalty-updates/schema"
+      title: データカタログ
+      icon: dashboard
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: user:default/nmushino
+  system: a-cluster
+  definition: |
+    asyncapi: 2.6.0
+    info:
+      title: loyalty-updates
+      version: 1.0.0
+      description: ロイヤリティポイント更新通知トピック
+    servers:
+      production:
+        url: shop-cluster-kafka-bootstrap:9092
+        protocol: kafka
+    channels:
+      loyalty-updates:
+        description: ロイヤリティ更新情報を受信するトピック
+        subscribe:
+          operationId: receiveLoyaltyUpdate
+          message:
+            name: LoyaltyUpdate
+            contentType: application/json
+            payload:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                points:
+                  type: integer
