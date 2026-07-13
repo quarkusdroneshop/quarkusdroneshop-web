@@ -19,7 +19,7 @@ class OrderInTest {
         OrderIn o = new OrderIn("ord-1", "li-1", "A101", "Alice", 2, new BigDecimal("3.50"));
         assertEquals("ord-1", o.getOrderId());
         assertEquals("li-1", o.getLineItemId());
-        assertEquals("Drone", o.getItemName());
+        assertEquals("A101", o.getItemName());
         assertEquals("Alice", o.getCustomerName());
         assertEquals(2, o.getQuantity());
         assertEquals(new BigDecimal("3.50"), o.getPrice());
@@ -36,7 +36,7 @@ class OrderInTest {
         o.setPrice(new BigDecimal("2.00"));
         assertEquals("ord-2", o.getOrderId());
         assertEquals("li-2", o.getLineItemId());
-        assertEquals("A102", o.getItemName());
+        assertEquals("Tea", o.getItemName());
         assertEquals("Bob", o.getCustomerName());
         assertEquals(3, o.getQuantity());
         assertEquals(new BigDecimal("2.00"), o.getPrice());
