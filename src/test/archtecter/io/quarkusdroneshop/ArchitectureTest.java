@@ -228,6 +228,7 @@ public class ArchitectureTest {
                 "jakarta..",
                 "io.quarkus..",
                 "io.smallrye..",
+                "io.vertx..",
                 "org.eclipse.microprofile..",
                 "org.apache.kafka..",
                 "com.fasterxml..",
