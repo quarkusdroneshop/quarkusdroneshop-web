@@ -252,6 +252,10 @@ $(function () {
 //              setTimeout(cleanup(state.itemId), 15000);
             display(state);
         }
+        if(state.status=="CANCELLED"){
+            console.log(state);
+            display(state);
+        }
     };
 
     // Loyalty toast notification
@@ -308,7 +312,8 @@ function line(state) {
           qdca10 = state.item.preparedBy;
       }
     */
-    return "<tr id='" + id + "'>" +
+    var rowClass = status === "CANCELLED" ? " class='table-danger'" : "";
+    return "<tr id='" + id + "'" + rowClass + ">" +
         "<td>" + customer + "</td>" +
         "<td>" + displayFriendlyItem(product) + "</td>" +
         "<td>" + displayFriendlyStatus(status) + "</td>" +
@@ -385,6 +390,10 @@ function displayFriendlyStatus(status){
         case "FULFILLED":
             console.log("Ready!");
             result = "Ready";
+            break;
+        case "CANCELLED":
+            console.log("Out of stock");
+            result = "Out of Stock";
             break;
         default:
             result = status;
