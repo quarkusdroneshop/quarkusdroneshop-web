@@ -30,6 +30,7 @@ create table droneshop.OutboxEvent (
                              type varchar(255) not null,
                              timestamp timestamp not null,
                              payload varchar(8000),
+                             tracingspancontext varchar(256),
                              primary key (id)
 );
 alter table if exists droneshop.LineItems
