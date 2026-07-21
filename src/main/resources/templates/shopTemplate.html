@@ -60,6 +60,7 @@
                 <li><a href="#team">Team</a></li>
                 <li><a href="#testimonials">Twitter</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <li id="history_link" class="nav-item"><a class="nav-link" data-toggle="modal" data-target="#historyModal">History</a></li>
                 <li id="rewards_link" class="nav-item"><a class="nav-link" data-toggle="modal" data-target="#rewardsModal">Rewards</a></li>
                 <li id="rewardPointsItem" class="nav-item reward-chip-item" style="display:none;">
                     <span class="reward-chip">
@@ -123,6 +124,32 @@
     </div>
 </div>
 
+<div class="modal" id="historyModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Purchase History
+                </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div id="history_empty" class="small text-muted">No history yet — place an order first.</div>
+                <ul class="list-group" id="history_list"></ul>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <div class="flex-fill">
+                    <button type="button" class="btn-sm btn-danger pull-right" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <span class="anchor" id="about"></span>
 <section class="about">
     <div class="container padding-2x">
@@ -182,6 +209,10 @@
                         <div id="rewards_display" class="small text-muted" style="align-self: flex-end">
                             <text> Rewards member</text>
                             <text id="rewards_display_id"></text>
+                        </div>
+                        <div id="customer360_display" class="small text-muted" style="align-self: flex-end; display:none;">
+                            <div>Customer profile: <strong id="c360_totalOrders"></strong> orders total</div>
+                            <div>Last order: <span id="c360_lastOrderId"></span> (<span id="c360_lastLocation"></span>)</div>
                         </div>
                         <form class="form-inline" action="" id="item_form">
                             <div class="flex-fill d-inline-flex justify-content-between">

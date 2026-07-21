@@ -12,10 +12,14 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
+import java.util.List;
 import java.util.Map;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import io.quarkusdroneshop.web.domain.Customer360;
 
 import java.util.HashMap;
 import java.util.concurrent.CompletionStage;
@@ -40,6 +44,9 @@ public class RestResource {
 
     @Inject
     OrderService orderService;
+
+    @Inject
+    Customer360HistoryStore customer360HistoryStore;
 
     @Inject
     Reward reward;
@@ -80,5 +87,12 @@ public class RestResource {
                 logger.error("Order failed", ex);
                 return Response.serverError().entity(ex.getMessage()).build();
             });
+    }
+
+    @GET
+    @Path("/history")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Customer360> history(@QueryParam("name") String customerName) {
+        return customer360HistoryStore.getHistory(customerName);
     }
 }

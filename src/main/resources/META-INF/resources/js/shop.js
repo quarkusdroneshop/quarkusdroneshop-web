@@ -7,6 +7,7 @@ const rewardUrl = appvalues.dataset.rewardUrl;
 // Rewards Stream EventSource - ポイント表示
 const rewardPointsEl = document.getElementById('rewardPoints');
 let rewardEventSource = null;
+let lastOrderName = null;
 
 /* Display the modal popup with selected data */
 $('#myModal').on('show.bs.modal', function (event) {
@@ -109,6 +110,9 @@ $('#item_form').submit(function( event ) {
         }
         console.log('added');
     }
+
+    displayCustomer360(name);
+    lastOrderName = name;
 
     // display the alert for successfully adding an item
     $('#item_added_alert').text(displayFriendlyItem(item) + ' for ' + name + ' added to order.').show();
@@ -434,6 +438,41 @@ function displayRewardPoint(customerEmail){
     };
 }
 
+let customer360EventSource = null;
+
+function displayCustomer360(customerName){
+    if (!customerName) return;
+
+    const panel = document.getElementById('customer360_display');
+    const totalOrdersEl = document.getElementById('c360_totalOrders');
+    const lastOrderIdEl = document.getElementById('c360_lastOrderId');
+    const lastLocationEl = document.getElementById('c360_lastLocation');
+
+    if (customer360EventSource) {
+        customer360EventSource.close();
+    }
+
+    panel.style.display = 'none';
+
+    customer360EventSource = new EventSource('/dashboard/customer360/stream');
+
+    customer360EventSource.onmessage = function(event) {
+        const profile = JSON.parse(event.data);
+        console.log("customer360", profile);
+
+        if (profile && profile.customerName === customerName) {
+            totalOrdersEl.textContent = profile.totalOrders != null ? profile.totalOrders : "0";
+            lastOrderIdEl.textContent = profile.lastOrderId || "-";
+            lastLocationEl.textContent = profile.lastLocation || "-";
+            panel.style.display = '';
+        }
+    };
+
+    customer360EventSource.onerror = function(error) {
+        console.error("Customer360 SSE Error:", error);
+    };
+}
+
 $('#rewards_modal').on('submit', function() {
 
     let rewards_id = $('#rewards_id').val();
@@ -455,4 +494,55 @@ $( document ).ready(function() {
         $('#rewards_display_id').text(email);
     }
     displayRewardPoint(email);
+});
+
+/* History モーダル - dataproduct-customer-360 から抽出したデータを表示 */
+function renderHistory(profiles) {
+    const list = document.getElementById('history_list');
+    const empty = document.getElementById('history_empty');
+    list.innerHTML = '';
+
+    if (!profiles || profiles.length === 0) {
+        empty.style.display = '';
+        return;
+    }
+    empty.style.display = 'none';
+
+    profiles.forEach(function(profile) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+
+        const updatedAt = profile.updatedAt ? new Date(profile.updatedAt).toLocaleString() : '-';
+        const lastOrderAt = profile.lastOrderAt ? new Date(profile.lastOrderAt).toLocaleString() : '-';
+
+        li.innerHTML =
+            '<div><strong>' + (profile.totalOrders != null ? profile.totalOrders : '0') + '</strong> orders total'
+            + ' &middot; last order <strong>' + (profile.lastOrderId || '-') + '</strong>'
+            + ' at <strong>' + (profile.lastLocation || '-') + '</strong></div>'
+            + '<div class="small text-muted">order time: ' + lastOrderAt + ' / profile updated: ' + updatedAt + '</div>';
+
+        list.appendChild(li);
+    });
+}
+
+function loadHistory() {
+    const name = lastOrderName || $('#item_form').find('input[name="name"]').val();
+
+    if (!name) {
+        renderHistory([]);
+        return;
+    }
+
+    $.getJSON('/history', { name: name })
+        .done(function(profiles) {
+            renderHistory(profiles);
+        })
+        .fail(function(error) {
+            console.error("Failed to load history", error);
+            renderHistory([]);
+        });
+}
+
+$('#historyModal').on('show.bs.modal', function() {
+    loadHistory();
 });

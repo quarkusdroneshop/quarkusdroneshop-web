@@ -1,5 +1,6 @@
 package io.quarkusdroneshop.web.infrastructure;
 
+import io.quarkusdroneshop.web.domain.Customer360;
 import io.quarkusdroneshop.web.domain.DashboardUpdate;
 import io.quarkusdroneshop.web.domain.RewardEvent;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -40,6 +41,11 @@ public class DashboardResource {
     @Broadcast
     Publisher<RewardEvent> rewards;
 
+    @Inject
+    @Channel("customer-360")
+    @Broadcast
+    Publisher<Customer360> customer360;
+
     @GET
     @Path("/stream")
     @Produces(MediaType.SERVER_SENT_EVENTS) // denotes that server side events (SSE) will be produced
@@ -52,6 +58,13 @@ public class DashboardResource {
     @Produces(MediaType.SERVER_SENT_EVENTS)
     public void streamRewards(@Context SseEventSink sink, @Context Sse sse) {
         stream(rewards, sink, sse);
+    }
+
+    @GET
+    @Path("/customer360/stream")
+    @Produces(MediaType.SERVER_SENT_EVENTS)
+    public void streamCustomer360(@Context SseEventSink sink, @Context Sse sse) {
+        stream(customer360, sink, sse);
     }
 
     private <T> void stream(Publisher<T> source, SseEventSink sink, Sse sse) {
