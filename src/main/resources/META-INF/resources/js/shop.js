@@ -240,12 +240,22 @@ function uuidv4() {
 $(function () {
     /* var source = new EventSource("http://quarkus-shop-web-quarkus-shop.apps.cluster-virtual-1b57.virtual-1b57.sandbox1482.opentlc.com/dashboard/stream"); */
 
+    var MAX_BOARD_ROWS = 200;
     var source = new EventSource('/dashboard/stream');
     source.onmessage = function(e) {
         console.log(e);
         var state = JSON.parse(e.data);
-        if(state.status=="IN_PROGRESS")
-            $("tbody").append(line(state));
+        if(state.status=="IN_PROGRESS"){
+            // 復旧直後などにバックログの大量のイベントが一気に流れてくると、
+            // 上限なしで <tr> を追加し続けてブラウザが固まってしまうため、
+            // 既存行があれば更新のみとし、行数にも上限を設ける。
+            var existing = $("#"+state.itemId);
+            if(existing.length){
+                existing.replaceWith(line(state));
+            } else if($("tbody tr").length < MAX_BOARD_ROWS){
+                $("tbody").append(line(state));
+            }
+        }
         if(state.status=="FULFILLED"){
             console.log(state);
 //              $("#"+state.itemId).replaceWith(line(state));

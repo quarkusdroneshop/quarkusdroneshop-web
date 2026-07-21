@@ -99,6 +99,23 @@ $(function() {
 
     new WOW().init();
 
+    // ナビの #product 等へのアンカージャンプ (クリックによるハッシュ変化、
+    // および #product 付き URL への直接アクセスの両方) はブラウザによって
+    // native の scroll イベントを発火しないことがあり、その場合 WOW.js の
+    // 可視判定が一切走らず該当セクション以下の要素が visibility:hidden の
+    // まま残ってしまう (画面が真っ白/空白に見える不具合)。ページ読み込み時に
+    // 既にハッシュが付いている場合、およびハッシュ変化のたびに scroll
+    // イベントを強制発火して WOW.js に再チェックさせる。
+    function forceWowRecheck() {
+        setTimeout(function () {
+            $(window).trigger('scroll');
+        }, 50);
+    }
+    if (window.location.hash) {
+        forceWowRecheck();
+    }
+    $(window).on('hashchange', forceWowRecheck);
+
     $(document).on('click', '[data-toggle="lightbox"]', function(event) {
         event.preventDefault();
         $(this).ekkoLightbox();
