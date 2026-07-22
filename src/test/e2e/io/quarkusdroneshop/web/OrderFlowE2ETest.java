@@ -133,8 +133,8 @@ class OrderFlowE2ETest {
     @Test
     void testFullOrderFlow_dashboardUpdatePropagation() {
         // Simulate incoming Kafka dashboard update (as would come from barista service)
-        UUID orderId = UUID.fromString("e2e0da5b-0000-0000-0000-000000000001");
-        UUID itemId = UUID.randomUUID();
+        String orderId = "e2e0da5b-0000-0000-0000-000000000001";
+        String itemId = UUID.randomUUID().toString();
         DashboardUpdate update = new DashboardUpdate(orderId, itemId, "Carol", "QDC_A101", OrderStatus.READY, "barista-bot");
 
         @SuppressWarnings("unchecked")

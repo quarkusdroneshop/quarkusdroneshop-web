@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
 import java.math.BigDecimal;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -77,8 +76,8 @@ class DashboardResourceTest {
     @SuppressWarnings("unchecked")
     void testDashboardUpdateIsPublished() {
         DashboardUpdate update = new DashboardUpdate(
-            UUID.fromString("82124c69-a108-4ccc-9ac4-64566e389178"),
-            UUID.fromString("f84cb5e2-a3fd-43af-8df8-b5d74b133115"),
+            "82124c69-a108-4ccc-9ac4-64566e389178",
+            "f84cb5e2-a3fd-43af-8df8-b5d74b133115",
             "Alice",
             "QDC_A101",
             OrderStatus.IN_QUEUE,
