@@ -48,9 +48,9 @@ metadata:
   name: quarkusdroneshop-web-api
   description: オーダ情報 REST API
   annotations:
-    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox242.opentlc.com/service/apiServices/quarkusdroneshop-web?showDeletedTables=false"
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox3207.opentlc.com/service/apiServices/quarkusdroneshop-web?showDeletedTables=false"
   links:
-    - url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox242.opentlc.com/service/apiServices/quarkusdroneshop-web?showDeletedTables=false"
+    - url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox3207.opentlc.com/service/apiServices/quarkusdroneshop-web?showDeletedTables=false"
       title: データカタログ
       icon: dashboard
 spec:
@@ -78,9 +78,9 @@ metadata:
   description: "Kafka トピック: orders-in（注文受付）"
   annotations:
     backstage.io/kubernetes-cluster: a-cluster
-    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox242.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.orders-in/schema"
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox3207.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.orders-in/schema"
   links:
-    - url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox242.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.orders-in/schema"
+    - url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox3207.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.orders-in/schema"
       title: データカタログ
       icon: dashboard
 spec:
@@ -125,9 +125,9 @@ metadata:
   description: "Kafka トピック: web-updates（注文ステータス更新）"
   annotations:
     backstage.io/kubernetes-cluster: a-cluster
-    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox242.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.web-updates/schema"
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox3207.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.web-updates/schema"
   links:
-    - url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox242.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.web-updates/schema"
+    - url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox3207.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.web-updates/schema"
       title: データカタログ
       icon: dashboard
 spec:
@@ -170,9 +170,9 @@ metadata:
   description: "Kafka トピック: loyalty-updates（ロイヤリティ更新）"
   annotations:
     backstage.io/kubernetes-cluster: a-cluster
-    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox242.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.loyalty-updates/schema"
+    openmetadata/explore-url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox3207.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.loyalty-updates/schema"
   links:
-    - url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox242.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.loyalty-updates/schema"
+    - url: "http://openmetadata-openmetadata.apps.ocp.pjdcb.sandbox3207.opentlc.com/topic/external-shop-cluster-kafka-asite%3A9094.loyalty-updates/schema"
       title: データカタログ
       icon: dashboard
 spec:
