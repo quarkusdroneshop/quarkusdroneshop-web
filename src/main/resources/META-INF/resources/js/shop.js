@@ -68,7 +68,9 @@ $('#item_form').submit(function( event ) {
     let name = $('#item_form').find('input[name="name"]').val();
     let price = parseFloat($('#item_form').find('input[name="item_price"]').val());
 
-    let item_to_add = { 'item' : item, 'name': name, 'price': price};
+    // dataproduct-order-events (orders-in 由来) と orders-up (QDCA10/QDCA10pro 発行) が
+    // 同じ itemId で明細を突合できるよう、ここ (Web) で明細IDを採番して送信する。
+    let item_to_add = { 'itemId': uuidv4(), 'item' : item, 'name': name, 'price': price};
 
     if(item_type == 'qdca10'){
         console.log('adding qdca10 item');
@@ -143,7 +145,7 @@ $("#order_form").submit(function(event){
         let item = $('#item_form').find('input[name="item"]').val();
         let name = $('#item_form').find('input[name="name"]').val();
         let price = parseFloat($('#item_form').find('input[name="item_price"]').val());
-        let item_to_add = { 'name': name, 'item': item, 'price': price };
+        let item_to_add = { 'itemId': uuidv4(), 'name': name, 'item': item, 'price': price };
 
         if(item_type == 'beverage'){
             console.log('adding beverage');
