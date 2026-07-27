@@ -234,5 +234,10 @@ public class ArchitectureTest {
                 "com.fasterxml..",
                 "org.slf4j..",
                 "org.jboss..",
-                "org.reactivestreams..");
+                "org.reactivestreams..",
+                // Customer360Deserializer 等、Apicurio Service Registry 経由で
+                // Avro をデシリアライズする Kafka Deserializer が infrastructure に
+                // 配置されるため許可する。
+                "io.apicurio..",
+                "org.apache.avro..");
 }
