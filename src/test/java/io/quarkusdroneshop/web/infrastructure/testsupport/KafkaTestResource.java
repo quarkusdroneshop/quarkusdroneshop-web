@@ -15,6 +15,8 @@ public class KafkaTestResource  implements QuarkusTestResourceLifecycleManager {
         env.putAll(InMemoryConnector.switchIncomingChannelsToInMemory("web-updates"));
         env.putAll(InMemoryConnector.switchIncomingChannelsToInMemory("loyalty-updates"));
         env.putAll(InMemoryConnector.switchIncomingChannelsToInMemory("rewards"));
+        env.putAll(InMemoryConnector.switchIncomingChannelsToInMemory("customer-360"));
+        env.putAll(InMemoryConnector.switchIncomingChannelsToInMemory("customer-360-history"));
         env.putAll(InMemoryConnector.switchOutgoingChannelsToInMemory("orders-up"));
         return env;
     }
