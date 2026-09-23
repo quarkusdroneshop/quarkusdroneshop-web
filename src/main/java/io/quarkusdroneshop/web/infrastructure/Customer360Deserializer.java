@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Customer360Deserializer implements Deserializer<Customer360> {
 
-    private static final Logger logger = LoggerFactory.getLogger(Customer360Deserializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Customer360Deserializer.class);
 
     private final AvroKafkaDeserializer<GenericRecord> avroDeserializer = new AvroKafkaDeserializer<>();
 
@@ -44,7 +44,7 @@ public class Customer360Deserializer implements Deserializer<Customer360> {
             return new Customer360(customerName, loyaltyMemberId, lastLocation,
                     lastOrderId, lastOrderAt, totalOrders, updatedAt);
         } catch (Exception e) {
-            logger.warn("Failed to deserialize Customer360 record", e);
+            LOGGER.warn("Failed to deserialize Customer360 record", e);
             return null;
         }
     }

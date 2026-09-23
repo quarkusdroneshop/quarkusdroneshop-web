@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 @RegisterForReflection
 public class DashboardUpdateDeserializer extends ObjectMapperDeserializer<DashboardUpdate> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DashboardUpdateDeserializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardUpdateDeserializer.class);
 
     public DashboardUpdateDeserializer() {
         super(DashboardUpdate.class);
@@ -24,7 +24,7 @@ public class DashboardUpdateDeserializer extends ObjectMapperDeserializer<Dashbo
         try {
             return super.deserialize(topic, data);
         } catch (Exception e) {
-            logger.warn("Skipping unparseable DashboardUpdate on topic {}", topic, e);
+            LOGGER.warn("Skipping unparseable DashboardUpdate on topic {}", topic, e);
             return null;
         }
     }
